@@ -1,15 +1,13 @@
 require("dotenv").config();
 const express = require("express");
+const path = require("path");
 
 const app = express();
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res) => {
-    res.send("<h1>Hi Mouri! 🥱<h1>");
-});
-
-app.get("/users", (req, res) => {
-    res.json({success: true, users: ["Alice", "Bob"]});
+    res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 if(process.env.NODE_ENV != "production"){
