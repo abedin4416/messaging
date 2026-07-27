@@ -5,7 +5,7 @@ const app = express();
 app.use(express.json());
 
 app.get("/", (req, res) => {
-    res.send("Hello, I am Tanim.");
+    res.send("<h1>Hello I am Tanim</h1>");
 });
 
 app.get("/users", (req, res) => {
