@@ -1,5 +1,5 @@
 let ch = document.querySelector("#ch");
 
 ch.addEventListener("click", ()=>{
-    document.write("<h2>Boooom! 💥💥</h2>")
+    document.appendChild("<h2>Boooom! 💥💥</h2>")
 })
