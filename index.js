@@ -16,7 +16,7 @@ const pool = new Pool({
 });
 
 app.get("/", (req, res) => {
-    res.send("Express app running from root on vercel!");
+    res.send("Hello, I am Tanim.");
 });
 
 app.get("/users", (req, res) => {
