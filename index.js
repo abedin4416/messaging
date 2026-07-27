@@ -5,7 +5,7 @@ const app = express();
 app.use(express.json());
 
 app.get("/", (req, res) => {
-    res.send("<h1>Hi Choity! 🥱<h1>");
+    res.send("<h1>Hi Mouri! 🥱<h1>");
 });
 
 app.get("/users", (req, res) => {
