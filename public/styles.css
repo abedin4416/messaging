@@ -35,6 +35,7 @@ body{
 #title{
     font-weight: bold;
     font-size: 16pt;
+    align-content:center;
 }
 
 #user-form{
@@ -74,11 +75,13 @@ body{
 #submit{
     width:20rem;
     height:2.7rem;
-    background:linear-gradient(to right, var(--l-purple), var(--l-teal), var(--l-violet));
-    background-size: 300% 300%;
+    background:linear-gradient(to right, rgb(95 63 255), rgb(145 93 255));
+    background-size: 100% 100%;
     transition: background-position 0.5s ease, transform 0.2s ease;
     border-radius:0.3rem;
     border:1px solid grey;
+    color:white;
+    box-shadow: inset 0 0 10px -2px var(--l-violet);
     font-size: 12pt;
 }
 #submit:hover {
