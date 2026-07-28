@@ -1,7 +1,8 @@
-let ch = document.querySelector("#ch");
+const ch = document.querySelector("#ch");
 
-ch.addEventListener("click", ()=>{
-    const h2 = document.createElement("h2");
-    h2.textContent = "Boooom! 💥💥";
-    document.body.appendChild(h2);
-});
+async function recieve(api){
+    const res = await fetch(api, {method: "POST"});
+    const data = await res.json();
+    return data;
+}
+
