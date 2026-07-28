@@ -10,8 +10,16 @@
 }
 
 @font-face {
-    font-family: "Roboto";
-    src: url("res/roboto.ttf") format("truetype");
+    font-family: "gsanscode";
+    src: url("res/gsanscode.ttf") format("truetype");
+    font-weight:400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "gsansflex";
+    src: url("res/gsansflex.ttf") format("truetype");
     font-weight:400;
     font-style: normal;
     font-display: swap;
@@ -19,7 +27,7 @@
 
 body{
     margin:0;
-    font-family: "Roboto";
+    font-family: "gsanscode";
 }
 
 #header{
@@ -41,8 +49,15 @@ body{
 }
 #signup{
     border-radius:1rem;
-    border:1px dashed grey;
-    font-size:11pt;
+    border:1px dashed var(--blue);
+    font-size:12pt;
+    padding:0.3rem;
+    padding-left:0.5rem;
+    padding-right:0.5rem;
+    background:rgb(205, 212, 255);
+    font-family:"gsansflex";
+    white-space: 1;
+
 }
 
 #user-form{
@@ -64,7 +79,7 @@ body{
     background: var(--l-grey);
     border-radius: 0.3rem;
     box-sizing: border-box;
-    font-family: "Roboto";
+    font-family: "gsanscode";
     padding:0.5rem;
     margin-bottom: 1rem;
     transition: box-shadow 0.3s ease;
@@ -92,6 +107,7 @@ body{
     color:white;
     box-shadow: inset 0 0 10px -2px var(--l-violet);
     font-size: 12pt;
+    font-family: "gsansflex";
 }
 #submit:hover {
   background-position: right center;
