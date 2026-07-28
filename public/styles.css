@@ -6,6 +6,7 @@
     --l-violet: rgb(220,180,255);
     --l-teal: rgb(200,253,255);
     --l-yellow: rgb(255,240,180);
+    --l-grey: rgb(245,252,252);
 }
 
 @font-face {
@@ -25,7 +26,15 @@ body{
     width:100%;
     height:3rem;
     position: absolute;
+    display: grid;
     top:0;
+    box-sizing: border-box;
+    padding: 0.5rem;
+}
+
+#title{
+    font-weight: bold;
+    font-size: 16pt;
 }
 
 #user-form{
@@ -38,28 +47,28 @@ body{
 #user-form-msg{
     margin-bottom:1rem;
 }
-.input-wrapper {
-    position: relative;
-    width: 20rem;
-    height: 2.8rem;
-    border-radius: 0.3rem;
-    overflow: hidden;
-    box-shadow:
-        inset 0 10px 20px -12px var(--l-purple),
-        inset 0 -10px 20px -12px var(--l-teal),
-        inset 10px 0 20px -12px var(--l-yellow),
-        inset -10px 0 20px -12px var(--l-violet);
-    margin-bottom:1rem;
-}
+
 .user-input {
-    width: 100%;
-    height: 100%;
+    width:20rem;
+    height:2.7rem;
     border: 1px dashed grey;
-    border-radius: inherit;
-    background: none;
+    background: var(--l-grey);
+    border-radius: 0.3rem;
     box-sizing: border-box;
     font-family: "Roboto";
     padding:0.5rem;
+    margin-bottom: 1rem;
+    transition: box-shadow 0.3s ease;
+}
+.user-input:nth-child(2):hover{
+    background:white;
+    box-shadow: inset 0 0 20px -2px var(--l-teal);
+    border: 1px dashed var(--teal);
+}
+.user-input:nth-child(3):hover{
+    background:white;
+    box-shadow: inset 0 0 20px -2px var(--l-violet);
+    border: 1px dashed var(--purple);
 }
 
 #submit{
