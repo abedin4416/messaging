@@ -29,13 +29,20 @@ body{
     display: grid;
     top:0;
     box-sizing: border-box;
-    padding: 0.5rem;
+    padding: 1rem;
+    grid-auto-flow:column;
+    justify-content: space-between;
 }
 
 #title{
     font-weight: bold;
     font-size: 16pt;
     align-content:center;
+}
+#signup{
+    border-radius:1rem;
+    border:1px dashed grey;
+    font-size:11pt;
 }
 
 #user-form{
@@ -47,6 +54,7 @@ body{
 
 #user-form-msg{
     margin-bottom:1rem;
+    text-align: center;
 }
 
 .user-input {
