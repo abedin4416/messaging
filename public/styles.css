@@ -40,8 +40,8 @@ body{
 }
 .input-wrapper {
     position: relative;
-    width: 19rem;
-    height: 2.5rem;
+    width: 20rem;
+    height: 2.8rem;
     border-radius: 0.3rem;
     overflow: hidden;
     box-shadow:
@@ -63,8 +63,8 @@ body{
 }
 
 #submit{
-    width:19rem;
-    height:2.5rem;
+    width:20rem;
+    height:2.7rem;
     background:linear-gradient(to right, var(--l-purple), var(--l-teal), var(--l-violet));
     background-size: 300% 300%;
     transition: background-position 0.5s ease, transform 0.2s ease;
