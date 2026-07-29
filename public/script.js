@@ -20,9 +20,11 @@ async function receive(api, method = "GET", data = null) {
     }
 }
 
-const signmsg = document.querySelector("#sign-msg");
-const nameinput = document.querySelector("#name");
-const signbtn = document.querySelector("#sign");
+function $(a){return document.querySelector(a);}
+
+const signmsg = $("#sign-msg");
+const nameinput = $("#name");
+const signbtn = $("#sign");
 
 async function updateUI(path){
     const data = await receive(path, "POST");
