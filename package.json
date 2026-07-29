@@ -10,5 +10,18 @@
         "dotenv": "^17.4.2",
         "express": "^4.19.0",
         "pg": "^8.22.0"
-    }
+    },
+    "description": "",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/abedin4416/messaging.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "bugs": {
+        "url": "https://github.com/abedin4416/messaging/issues"
+    },
+    "homepage": "https://github.com/abedin4416/messaging#readme"
 }

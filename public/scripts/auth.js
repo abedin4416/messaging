@@ -25,6 +25,9 @@ function $(a){return document.querySelector(a);}
 const signmsg = $("#sign-msg");
 const nameinput = $("#name");
 const signbtn = $("#sign");
+const submit = $("#submit");
+const username = $("#username")
+const password = $("#password");
 
 async function updateUI(path){
     const data = await receive(path, "POST");
@@ -42,7 +45,7 @@ async function updateUI(path){
     }
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", async ()=> {
     updateUI(window.location.pathname);
 });
 
@@ -55,4 +58,37 @@ signbtn.addEventListener("click", async ()=> {
 
 window.addEventListener("popstate", async ()=> {
     updateUI(window.location.pathname);
+});
+
+function inputstate(element, placeholder, isError = true){
+    if(isError) {
+        element.classList.add("emptyinput")
+        element.classList.remove("active-input");
+    }
+    else {
+        element.classList.remove("emptyinput");
+        element.classList.add("active-input");
+    }
+    element.placeholder = placeholder;
+}
+
+submit.addEventListener("click", async (e)=> {
+    e.preventDefault();
+    const path = window.location.pathname;
+    if(path == "/"){
+        if(!username.value){
+            inputstate(username, "Username cannot be empty");
+        }
+        else if(!password.value){
+            inputstate(password, "Password cannot be empty");
+        }
+    }
+})
+
+username.addEventListener("focus", ()=> {
+    inputstate(username, "Username", false);
+});
+
+password.addEventListener("focus", ()=> {
+    inputstate(password, "Password", false);
 })
