@@ -61,8 +61,11 @@ body{
     padding-right:0.5rem;
     background:rgb(205, 212, 255);
     font-family:"gsansflex";
-    white-space: 1;
+    transition: transform 0.3s ease;
+}
 
+#sign:hover{
+    transform: scale(1.03);
 }
 
 #user-form{
@@ -109,9 +112,9 @@ body{
 #submit{
     width:20rem;
     height:2.7rem;
-    background:linear-gradient(to right, rgb(95 63 255), rgb(145 93 255));
+    background:rgb(30,30,40);
     background-size: 100% 100%;
-    transition: background-position 0.5s ease, transform 0.2s ease;
+    transition: transform 0.2s ease;
     border-radius:0.3rem;
     border:1px solid grey;
     color:white;
@@ -120,6 +123,5 @@ body{
     font-family: "gsansflex";
 }
 #submit:hover {
-  background-position: right center;
   transform: scale(1.03);
 }
