@@ -29,11 +29,13 @@ async function updateUI(path){
     if(path=="/"){
         signmsg.textContent = data.signtext;
         nameinput.classList.add("hidden");
+        nameinput.disabled = true;
         signbtn.textContent = "Sign up";
     }
     else if(path=="/signup"){
         signmsg.textContent = data.signtext;
         nameinput.classList.remove("hidden");
+        nameinput.disabled = false;
         signbtn.textContent = "Sign in";
     }
 }
