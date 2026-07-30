@@ -70,7 +70,7 @@ body{
     transform: scale(1.03);
 }
 
-#user-form{
+#user-form-container{
     margin-top:4rem;
     display:grid;
     justify-content: center;
@@ -80,6 +80,10 @@ body{
 #user-form-msg{
     margin-bottom:1rem;
     text-align: center;
+}
+
+#input-container{
+    display:grid;
 }
 
 .user-input {
@@ -95,17 +99,17 @@ body{
     transition: box-shadow 0.3s ease;
     font-size:12pt;
 }
-.active-input:nth-child(2):hover{
+#fullname.active-input:hover{
     background:white;
     box-shadow: inset 0 0 20px -2px var(--l-blue);
     border: 1px dashed var(--blue);
 }
-.active-input:nth-child(3):hover{
+#username.active-input:hover{
     background:white;
     box-shadow: inset 0 0 20px -2px var(--l-teal);
     border: 1px dashed var(--teal);
 }
-.active-input:nth-child(4):hover{
+#password.active-input:hover{
     background:white;
     box-shadow: inset 0 0 20px -2px var(--l-violet);
     border: 1px dashed var(--purple);
@@ -135,5 +139,9 @@ body{
 }
 
 .emptyinput::placeholder{
+    color: var(--red);
+}
+
+.error{
     color: var(--red);
 }

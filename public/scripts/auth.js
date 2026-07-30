@@ -1,4 +1,4 @@
-async function receive(api, method = "GET", data = null) {
+async function server(api, method = "GET", data = null) {
     try {
         const fetchOptions = {
             method: method.toUpperCase(),
@@ -9,38 +9,23 @@ async function receive(api, method = "GET", data = null) {
             fetchOptions.body = JSON.stringify(data);
         }
         const res = await fetch(api, fetchOptions);
-
-        if (!res.ok) {
-            throw new Error(`HTTP Error! Status: ${res.status}`);
-        }
-        return await res.json();
+        return await res;
     } catch (error) {
         console.error("Fetch request failed:", error);
         throw error;
     }
 }
 
-function $(a){return document.querySelector(a);}
-
-const signmsg = $("#sign-msg");
-const nameinput = $("#name");
 const signbtn = $("#sign");
-const submit = $("#submit");
-const username = $("#username")
-const password = $("#password");
+
 
 async function updateUI(path){
-    const data = await receive(path, "POST");
     if(path=="/"){
-        signmsg.textContent = data.signtext;
-        nameinput.classList.add("hidden");
-        nameinput.disabled = true;
+        signin_form();
         signbtn.textContent = "Sign up";
     }
     else if(path=="/signup"){
-        signmsg.textContent = data.signtext;
-        nameinput.classList.remove("hidden");
-        nameinput.disabled = false;
+        signup_form();
         signbtn.textContent = "Sign in";
     }
 }
@@ -60,21 +45,13 @@ window.addEventListener("popstate", async ()=> {
     updateUI(window.location.pathname);
 });
 
-function inputstate(element, placeholder, isError = true){
-    if(isError) {
-        element.classList.add("emptyinput")
-        element.classList.remove("active-input");
-    }
-    else {
-        element.classList.remove("emptyinput");
-        element.classList.add("active-input");
-    }
-    element.placeholder = placeholder;
-}
-
 submit.addEventListener("click", async (e)=> {
     e.preventDefault();
     const path = window.location.pathname;
+    const fullname = $("#fullname");
+    const username = $("#username");
+    const password = $("#password");
+
     if(path == "/"){
         if(!username.value){
             inputstate(username, "Username cannot be empty");
@@ -82,13 +59,26 @@ submit.addEventListener("click", async (e)=> {
         else if(!password.value){
             inputstate(password, "Password cannot be empty");
         }
+        else {
+        }
     }
-})
-
-username.addEventListener("focus", ()=> {
-    inputstate(username, "Username", false);
+    else if(path == "/signup"){
+        if(!fullname.value){
+            inputstate(fullname, "Name is required");
+        }
+        else if(!username.value){
+            inputstate(username, "Username cannot be empty");
+        }
+        else if(!password.value){
+            inputstate(password, "Password cannot be empty");
+        }
+        else {
+            const response = await server("/create", "POST", {fullname:fullname.value, username:username.value, password:password.value});
+            if(response.status == 409){
+                const data = await response.json();
+                signmsg.textContent = data.error;
+                signmsg.classList.add("error");
+            }
+        }
+    }
 });
-
-password.addEventListener("focus", ()=> {
-    inputstate(password, "Password", false);
-})
