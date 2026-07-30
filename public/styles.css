@@ -129,6 +129,7 @@ body{
 }
 
 .emptyinput{
+    background:white;
     border: 1px dashed var(--red);
     box-shadow: inset 0 0 10px -2px var(--l-red);
 }
