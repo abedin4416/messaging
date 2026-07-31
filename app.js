@@ -25,7 +25,8 @@ app.post("/create", async (req, res) => {
   }
 
   try {
-    if (await userexists(username)) {
+    const existingUser = await userexists(username);
+    if (existingUser) {
       return res.status(409).json({ error: 'Username is not available.' });
     }
 
