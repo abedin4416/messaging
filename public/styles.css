@@ -74,7 +74,10 @@ body{
     width:2.3rem;
     height:2.3rem;
     border-radius:2rem;
-    background-image: url("/res/icon_transparent.png");
+    background-image: url("/res/icon.png");
+    background-repeat: no-repeat;
+    background-size: 85%;
+    background-position: center;
     margin-right:0.6rem;
 }
 
