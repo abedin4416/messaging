@@ -53,5 +53,5 @@ app.get("*", (req, res) => {
     res.sendFile(path.join(import.meta.dirname, 'public', 'index.html'));
 });
 
-app.listen(3000);
+if (process.env.VERCEL !== '1') app.listen(3000);
 export default app;
