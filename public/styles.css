@@ -84,42 +84,63 @@ body{
     align-content:center;
 }
 
-#search-container{
+.search-container{
     width:2.3rem;
     height:2.3rem;
-    border: 1px dashed rgb(200,200,230);
-    box-shadow:
-    inset 0 10px 8px -12px var(--teal),
-    inset 0 -10px 8px -12px var(--purple),
-    inset 10px 0 8px -12px var(--yellow),
-    inset -10px 0 8px -12px var(--blue);
+    border: 1px dashed rgb(59, 59, 84);
     border-radius: 2rem;
     display:grid;
     justify-items: center;
     align-items: center;
+    transition: transform 0.3s ease;
+}
+.search-container:hover{
+    transform: scale(1.03);
 }
 
 #search-icon{
-    width:2rem;
-    height:2rem;
+    width:100%;
+    height:100%;
     background-image: url("/res/search.png");
     background-repeat: no-repeat;
-    background-size: 60%;
+    background-size: 50%;
     background-position: center;
 }
-#sign{
-    border-radius:1rem;
-    border:1px dashed var(--blue);
-    font-size:12pt;
-    padding:0.3rem;
-    padding-left:0.5rem;
-    padding-right:0.5rem;
-    background:rgb(205, 212, 255);
-    font-family:"gsansflex";
-    transition: transform 0.3s ease;
+
+#option-container{
+    display:grid;
+    grid-auto-flow: column;
+    justify-content: center;
+    align-items: center;
 }
 
-#sign:hover{
+.sign{
+    height:2.3rem;
+    border-radius:3rem;
+    cursor:default;
+    transition: transform 0.3s ease;
+    font-size: 10pt;
+    padding:0.58rem;
+    box-sizing: border-box;
+    font-family: "gsansflex";
+    background:rgb(49, 49, 73);
+    box-shadow: inset 0 0 10px -2px var(--l-violet);
+    color:white;
+    font-weight: 500;
+}
+.sign:hover{
+    transform: scale(1.03);
+}
+.profile-btn{
+    width:2.3rem;
+    height:2.3rem;
+    border-radius:3rem;
+    cursor:default;
+    transition: transform 0.3s ease;
+    background:var(--blue);
+    margin-left:0.5rem;
+}
+.profile-btn:hover{
     transform: scale(1.03);
 }
 
@@ -133,8 +154,14 @@ body{
     text-align: center;
 }
 
-#input-container{
+#user-form{
     display:grid;
+    justify-content: center;
+    justify-items: center;
+}
+
+#sign-msg{
+    margin-bottom:1rem;
 }
 
 .user-input {
@@ -150,17 +177,17 @@ body{
     transition: box-shadow 0.3s ease;
     font-size:12pt;
 }
-#fullname.active-input:hover{
+#Fullname.active-input:hover{
     background:white;
     box-shadow: inset 0 0 20px -2px var(--l-blue);
     border: 1px dashed var(--blue);
 }
-#username.active-input:hover{
+#Username.active-input:hover{
     background:white;
     box-shadow: inset 0 0 20px -2px var(--l-teal);
     border: 1px dashed var(--teal);
 }
-#password.active-input:hover{
+#Password.active-input:hover{
     background:white;
     box-shadow: inset 0 0 20px -2px var(--l-violet);
     border: 1px dashed var(--purple);

@@ -43,7 +43,7 @@ app.post("/create", async (req, res) => {
     await db.query(insertQuery, [fullname, username, hashedPassword]);
     
     const sessionToken = crypto.randomBytes(32).toString("hex");
-    const expiresAt = new Date(Date.now()+2*24*60*60*1000);
+    const expiresAt = new Date(Date.now()+1*24*60*60*1000);
 
     await db.query(
       `INSERT INTO sessions (username, session_token, expires_at)
@@ -114,6 +114,53 @@ app.post("/logout", async (req, res) => {
   res.clearCookie("session_token");
   return res.join({success: true});
 })
+
+app.post("/signin", async (req, res) => {
+  const {username, password} = req.body;
+  if(!username || !password){
+    return res.status(400).json({error: "Username and password are required."});
+  }
+
+  try {
+    const userResult = await db.query(
+      "SELECT full_name, username, password_hash FROM users WHERE username = $1;",
+      [username]
+    );
+    if(userResult.rows.length === 0) {
+      return res.status(401).json({error: "Invalid username or password."});
+    }
+
+    const user = userResult.rows[0];
+
+    const isValidPassword = await argon2.verify(user.password_hash, password);
+    if(!isValidPassword) {
+      return res.status(401).json({error: "Invalid username or password."});
+    }
+
+    const sessionToken = crypto.randomBytes(32).toString("hex");
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate()+1);
+
+    await db.query(
+      `INSERT INTO sessions (username, session_token, expires_at) VALUES ($1, $2, $3);`,
+      [user.username, sessionToken, expiresAt]
+    );
+    res.cookie("session_token", sessionToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      expires: expiresAt,
+    });
+    
+    return res.status(201).json({loggedIn: true, user:{
+      fullname: user.full_name,
+      username: user.username
+    }});
+
+  } catch (err) {
+    return res.status(500).json({error: "Sign in error. Please try again."});
+  }
+});
 
 app.get("*", (req, res) => {
     res.sendFile(path.join(import.meta.dirname, 'public', 'index.html'));
