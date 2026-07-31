@@ -86,17 +86,17 @@ app.get("/api/session", async (req, res) => {
       `;
     const result = await db.query(query, [sessionToken]);
 
-    if(result.rows.length === 0) {
-      return res.json({loggedIn: false});
+    if(!result.rows || result.rows.length === 0) {
+      return res.status(200).json({loggedIn: false});
     }
 
-    const user = result.rows[0];
+    const session = result.rows[0];
 
     return res.status(200).json({
       loggedIn: true,
       user: {
-        username: user.username,
-        fullname: user.full_name,
+        username: session.username,
+        fullname: session.full_name,
       },
     });
   } catch (err) {
