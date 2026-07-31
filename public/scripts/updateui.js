@@ -89,7 +89,7 @@ function signup_form(){
                 history.pushState({path: "/"}, "", "/");
                 inboxgenerate();
             }
-        }/
+        }
     });
 }
 

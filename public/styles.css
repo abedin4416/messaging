@@ -74,7 +74,7 @@ body{
     width:2.3rem;
     height:2.3rem;
     border-radius:2rem;
-    background-color: brown;
+    background-image: url("/res/icon_transparent.png");
     margin-right:0.6rem;
 }
 
