@@ -19,7 +19,7 @@ async function server(api, method = "GET", data = null) {
 const signbtn = $("#sign");
 
 
-async function updateUI(path){
+function updateUI(path){
     if(path=="/"){
         signin_form();
         signbtn.textContent = "Sign up";
@@ -78,6 +78,9 @@ submit.addEventListener("click", async (e)=> {
                 const data = await response.json();
                 signmsg.textContent = data.error;
                 signmsg.classList.add("error");
+            }
+            else if(response.status == 201){
+                
             }
         }
     }

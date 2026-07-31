@@ -44,12 +44,12 @@ function formgen(a){
     inputcontainer.appendChild(username);
     inputcontainer.appendChild(password);
     signmsg.classList.remove("error");
+    submit.textContent = a;
 }
 
 function signup_form(){
     inputcontainer.replaceChildren();
     signmsg.textContent = "Create a new account.";
-    submit.textContent = "Sign up";
     const fullname = createEl("input");
     Object.assign(fullname, {
         id: "fullname",
@@ -67,6 +67,5 @@ function signup_form(){
 function signin_form(){
     inputcontainer.replaceChildren();
     signmsg.textContent = "Sign in to your account.";
-    submit.textContent = "Sign in";
     formgen("Sign in");
 }

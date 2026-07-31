@@ -1,12 +1,13 @@
-require("dotenv").config();
-const express = require("express");
-const path = require("path");
-const argon2 = require("argon2");
-const db = require("./api/database");
+import "dotenv/config";
+import express from "express";
+import path from "path";
+import argon2 from "argon2";
+import db from "./api/database.js";
+import { userexists } from "./api/verify.js";
 
 const app = express();
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(import.meta.dirname, "public")));
 
 app.post("/", (req, res) => {
     res.json({signtext: "Sign in to your account."});
@@ -14,11 +15,7 @@ app.post("/", (req, res) => {
 
 app.post("/signup", (req, res) => {
     res.json({signtext: "Create a new account."});
-})
-
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-})
+});
 
 app.post("/create", async (req, res) => {
   const { fullname, username, password } = req.body;
@@ -28,13 +25,8 @@ app.post("/create", async (req, res) => {
   }
 
   try {
-    const existingUser = await db.query(
-      "SELECT id FROM users WHERE username = $1;",
-      [username]
-    );
-
-    if (existingUser.rows.length > 0) {
-      return res.status(409).json({ error: 'Username is already taken.' });
+    if (await userexists(username)) {
+      return res.status(409).json({ error: 'Username is not available.' });
     }
 
     const hashedPassword = await argon2.hash(password);
@@ -48,14 +40,18 @@ app.post("/create", async (req, res) => {
     return res.status(201).json(result.rows[0]);
 
   } catch (err) {
-    console.error("Database error during user creation:", err);
+    //console.error("Database error during user creation:", err);
 
     if (err.code === '23505') {
-      return res.status(409).json({ error: 'Username is already taken.' });
+      return res.status(409).json({ error: 'Username is not available' });
     }
     return res.status(500).json({ error: 'Failed to create user.' });
   }
 });
 
+app.get("*", (req, res) => {
+    res.sendFile(path.join(import.meta.dirname, 'public', 'index.html'));
+});
+
 app.listen(3000);
-module.exports = app;
+export default app;
