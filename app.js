@@ -72,13 +72,12 @@ app.post("/create", async (req, res) => {
 });
 
 app.get("/api/session", async (req, res) => {
-  const sessionToken = req.cookies?.session_token;
-
-  if(!sessionToken){
-    return res.json({loggedIn: false});
-  }
-
   try{
+    const sessionToken = req.cookies?.session_token;
+    if(!sessionToken){
+      return res.status(200).json({loggedIn: false});
+    }
+
     const query = `
       SELECT u.username, u.full_name
       FROM sessions s
@@ -88,13 +87,12 @@ app.get("/api/session", async (req, res) => {
     const result = await db.query(query, [sessionToken]);
 
     if(result.rows.length === 0) {
-      res.clearCookie("session_token");
       return res.json({loggedIn: false});
     }
 
     const user = result.rows[0];
 
-    return res.json({
+    return res.status(200).json({
       loggedIn: true,
       user: {
         username: user.username,
@@ -103,7 +101,7 @@ app.get("/api/session", async (req, res) => {
     });
   } catch (err) {
     console.error("Auth check error: ", err);
-    return res.json({loggedIn: false});
+    return res.status(500).json({loggedIn: false, error: err.message});
   }
 });
 
