@@ -9,21 +9,20 @@
     </head>
     <body>
         <div id="header">
-            <div id="title">Textbit</div>
+            <div id="title-section">
+                <div id="back" class="back"></div>
+                <div id="icon"></div>
+                <div id="title">Textbit</div>
+            </div>
             <div id="option-container">
-                <button id="sign"></button>
+                <div id="search-container">
+                    <input id="search" hidden/>
+                    <div id="search-icon"></div>
+                </div>
+                <div id="corner-btn"></div>
             </div>
         </div>
-        <div id="user-form-container">
-            <div id="user-form-msg">
-                <h2>Welcome to Textbit.</h2>
-                <text id="sign-msg"></text>
-            </div>
-            <form id="user-form">
-                <div id="input-container"></div>
-                <button type="submit" id="submit"></button>
-            </form>
-        </form>
+        <div id="container"></div>
         <script src="scripts/updateui.js"></script>
         <script src="scripts/auth.js"></script>
     </body>

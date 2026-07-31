@@ -21,10 +21,10 @@ const signbtn = $("#sign");
 
 async function updateUI(path){
     if(path=="/"){
-        const res = await server("/api/session");
+        const res = await server("/session");
         const data = await res.json();
         if(data.loggedIn){
-            alert("You are logged in. " + data.user.fullname);
+            //alert("You are logged in. " + data.user.fullname);
         }
         else {
             signin_form();

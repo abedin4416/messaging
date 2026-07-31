@@ -71,7 +71,7 @@ app.post("/create", async (req, res) => {
   }
 });
 
-app.get("/api/session", async (req, res) => {
+app.get("/session", async (req, res) => {
   try{
     const sessionToken = req.cookies?.session_token;
     if(!sessionToken){
