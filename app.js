@@ -49,6 +49,9 @@ app.post("/create", async (req, res) => {
   }
 });
 
+app.get("*", (req, res) => {
+    res.sendFile(path.join(import.meta.dirname, 'public', 'index.html'));
+});
 
 if (process.env.VERCEL !== '1') app.listen(3000);
 export default app;
