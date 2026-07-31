@@ -69,3 +69,7 @@ function signin_form(){
     signmsg.textContent = "Sign in to your account.";
     formgen("Sign in");
 }
+
+function inboxheader(){
+    
+}

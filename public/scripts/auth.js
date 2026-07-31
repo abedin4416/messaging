@@ -19,10 +19,17 @@ async function server(api, method = "GET", data = null) {
 const signbtn = $("#sign");
 
 
-function updateUI(path){
+async function updateUI(path){
     if(path=="/"){
-        signin_form();
-        signbtn.textContent = "Sign up";
+        const res = await server("/api/session");
+        const data = await res.json();
+        if(data.loggedIn){
+            alert("You are logged in. " + data.user.fullname);
+        }
+        else {
+            signin_form();
+            signbtn.textContent = "Sign up";
+        }
     }
     else if(path=="/signup"){
         signup_form();
@@ -31,7 +38,7 @@ function updateUI(path){
 }
 
 document.addEventListener("DOMContentLoaded", async ()=> {
-    updateUI(window.location.pathname);
+    await updateUI(window.location.pathname);
 });
 
 signbtn.addEventListener("click", async ()=> {
@@ -80,7 +87,7 @@ submit.addEventListener("click", async (e)=> {
                 signmsg.classList.add("error");
             }
             else if(response.status == 201){
-                
+
             }
         }
     }

@@ -1,12 +1,15 @@
+import crypto from "crypto";
 import "dotenv/config";
 import express from "express";
 import path from "path";
 import argon2 from "argon2";
+import cookieParser from "cookie-parser";
 import db from "./api/database.js";
 import { userexists } from "./api/verify.js";
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.static(path.join(import.meta.dirname, "public")));
 
 app.post("/", (req, res) => {
@@ -30,25 +33,89 @@ app.post("/create", async (req, res) => {
       return res.status(409).json({ error: 'Username is not available.' });
     }
 
+    await db.query("BEGIN;");
+
     const hashedPassword = await argon2.hash(password);
     const insertQuery = `
       INSERT INTO users (full_name, username, password_hash)
-      VALUES ($1, $2, $3)
-      RETURNING id, full_name, username, created_at;
-    `;
+      VALUES ($1, $2, $3);`;
     
-    const result = await db.query(insertQuery, [fullname, username, hashedPassword]);
-    return res.status(201).json(result.rows[0]);
+    await db.query(insertQuery, [fullname, username, hashedPassword]);
+    
+    const sessionToken = crypto.randomBytes(32).toString("hex");
+    const expiresAt = new Date(Date.now()+2*24*60*60*1000);
+
+    await db.query(
+      `INSERT INTO sessions (username, session_token, expires_at)
+       VALUES ($1, $2, $3::timestamptz);`,
+      [username, sessionToken, expiresAt]
+    );
+
+    await db.query("COMMIT;");
+    
+    res.cookie("session_token", sessionToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      expires: expiresAt,
+    });
+    
+    return res.status(201).json({loggedIn: true, user: username});
 
   } catch (err) {
-    //console.error("Database error during user creation:", err);
-
+    await db.query("ROLLBACK;");
     if (err.code === '23505') {
       return res.status(409).json({ error: 'Username is not available' });
     }
     return res.status(500).json({ error: 'Failed to create user.' });
   }
 });
+
+app.get("/api/session", async (req, res) => {
+  const sessionToken = req.cookies?.session_token;
+
+  if(!sessionToken){
+    return res.json({loggedIn: false});
+  }
+
+  try{
+    const query = `
+      SELECT u.username, u.full_name
+      FROM sessions s
+      JOIN users u ON s.username = u.username
+      WHERE s.session_token = $1 AND s.expires_at > NOW();
+      `;
+    const result = await db.query(query, [sessionToken]);
+
+    if(result.rows.length === 0) {
+      res.clearCookie("session_token");
+      return res.json({loggedIn: false});
+    }
+
+    const user = result.rows[0];
+
+    return res.json({
+      loggedIn: true,
+      user: {
+        username: user.username,
+        fullname: user.full_name,
+      },
+    });
+  } catch (err) {
+    console.error("Auth check error: ", err);
+    return res.json({loggedIn: false});
+  }
+});
+
+app.post("/logout", async (req, res) => {
+  const sessionToken = req.cookies.session_token;
+
+  if(sessionToken) {
+    await db.query("DELETE FROM sessions WHERE sessions_token = $1;", [sessionToken]);
+  }
+  res.clearCookie("session_token");
+  return res.join({success: true});
+})
 
 app.get("*", (req, res) => {
     res.sendFile(path.join(import.meta.dirname, 'public', 'index.html'));
