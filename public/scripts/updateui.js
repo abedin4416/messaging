@@ -77,7 +77,7 @@ function signup_form(){
         else {
             const response = await server("/create", "POST", {
                 fullname:fullname.value, 
-                username:username.value, 
+                username:username.value,
                 password:password.value
             });
             if(response.status == 409){
@@ -89,7 +89,7 @@ function signup_form(){
                 history.pushState({path: "/"}, "", "/");
                 inboxgenerate();
             }
-        }
+        }/
     });
 }
 
