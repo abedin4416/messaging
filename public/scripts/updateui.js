@@ -86,7 +86,8 @@ function signup_form(){
                 signmsg?.classList.add("error");
             }
             else if(response.status == 201){
-
+                history.pushState({path: "/"}, "", "/");
+                inboxgenerate();
             }
         }
     });
