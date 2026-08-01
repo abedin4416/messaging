@@ -23,7 +23,7 @@ const submitBtn = "<button type='submit' id='submit'></button>";
 const signinForm = "<form id='user-form'>"+welcomeText+signinMsg+usernameInput+passwordInput+submitBtn+"</form>";
 const signupForm = "<form id='user-form'>"+ welcomeText+signinMsg+nameInput+usernameInput+passwordInput+submitBtn+"</form>";
 
-const searchBox = "<div id='search-box'></div>";
+const searchBox = "<input id='search-box'></input>";
 const searchBtn = "<div id='search-btn'></div>";
 const profileBtn = "<div id='profile-btn'></div>";
 const signinBtn = "<div id='sign-btn'>Sign in</div>";
