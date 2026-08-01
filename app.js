@@ -142,8 +142,7 @@ app.post("/signin", async (req, res) => {
     }
 
     const sessionToken = crypto.randomBytes(32).toString("hex");
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getHours()+1);
+    const expiresAt = new Date(Date.now() + 1 * 60 * 60 * 1000);
 
     await db.query(
       `INSERT INTO sessions (username, session_token, expires_at) VALUES ($1, $2, $3);`,
