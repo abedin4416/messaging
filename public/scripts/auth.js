@@ -53,17 +53,15 @@ container.addEventListener("click", async (e)=> {
         const fullname = $("#Fullname")?.value.trim();
         const username = $("#Username")?.value.trim();
         const password = $("#Password")?.value.trim();
-        console.log(username);
-        
         if(fullname==="") inputstate($("#Fullname"), "Name");
         else if(!username) inputstate($("#Username"), "Username");
         else if(!password) inputstate($("#Password"), "Password");
         else {
             const api = path === "/"? "/signin":"/create";
             const response = await server(api, "POST", {
-                ...(path !== '/' && {fullname:field[0][0]?.value}), 
-                username:field[1][0].value,
-                password:field[2][0].value
+                ...(path !== '/' && {fullname:fullname}),
+                username:username,
+                password:password
             });
             if(response.status >= 400){
                 const data = await response.json();
