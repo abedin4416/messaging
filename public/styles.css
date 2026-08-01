@@ -106,12 +106,12 @@ body{
 }
 
 #search-box{
-    width:20rem;
+    width:18rem;
     height:2.3rem;
     border:1px dashed rgb(59, 59, 84);
     background-image: url("res/search.png");
     background-repeat: no-repeat;
-    background-size: 4%;
+    background-size: 5%;
     background-position: 0.7rem center;
     border-radius:2rem;
     padding-left:2rem;
@@ -234,4 +234,13 @@ body{
 
 .error{
     color: var(--red);
+}
+
+@media (max-width: 48rem){
+    #search-box{
+        display:none;
+    }
+    #search-btn{
+        display:block;
+    }
 }

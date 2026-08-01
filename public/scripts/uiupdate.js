@@ -23,7 +23,7 @@ const submitBtn = "<button type='submit' id='submit'></button>";
 const signinForm = "<form id='user-form'>"+welcomeText+signinMsg+usernameInput+passwordInput+submitBtn+"</form>";
 const signupForm = "<form id='user-form'>"+ welcomeText+signinMsg+nameInput+usernameInput+passwordInput+submitBtn+"</form>";
 
-const searchBox = "<input id='search-box'></input>";
+const searchBox = "<input id='search-box' placeholder='Search for people'></input>";
 const searchBtn = "<div id='search-btn'></div>";
 const profileBtn = "<div id='profile-btn'></div>";
 const signinBtn = "<div id='sign-btn'>Sign in</div>";
@@ -36,7 +36,7 @@ const container = $("#container");
 const optionCont = $("#option-container")
 
 function inboxgenerate(){
-    optionCont.innerHTML = searchBox+profileBtn;
+    optionCont.innerHTML = searchBox+searchBtn+profileBtn;
     container.innerHTML = "Welcome. This is your inbox.";
 }
 
