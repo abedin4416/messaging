@@ -12,6 +12,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(import.meta.dirname, "public")));
 
+function error(res, status, err) {
+  return res.status(status).json({error:err});
+}
+
 app.post("/", (req, res) => {
     res.json({signtext: "Sign in to your account."});
 });
@@ -24,13 +28,13 @@ app.post("/create", async (req, res) => {
   const { fullname, username, password } = req.body;
 
   if (!fullname || !username || !password) {
-    return res.status(400).json({ error: 'All fields are required.' });
+    return error(res, 400, 'All fields are required.');
   }
 
   try {
     const existingUser = await userexists(username);
     if (existingUser) {
-      return res.status(409).json({ error: 'Username is not available.' });
+      return error(res, 409, 'Username is not available.');
     }
 
     await db.query("BEGIN;");
@@ -65,9 +69,9 @@ app.post("/create", async (req, res) => {
   } catch (err) {
     await db.query("ROLLBACK;");
     if (err.code === '23505') {
-      return res.status(409).json({ error: 'Username is not available' });
+      return error(res, 409, 'Username is not available');
     }
-    return res.status(500).json({ error: 'Failed to create user.' });
+    return error(res, 500, 'Failed to create user.');
   }
 });
 
@@ -118,7 +122,7 @@ app.post("/logout", async (req, res) => {
 app.post("/signin", async (req, res) => {
   const {username, password} = req.body;
   if(!username || !password){
-    return res.status(400).json({error: "Username and password are required."});
+    return error(res, 400, "Username and password are required.");
   }
 
   try {
@@ -127,14 +131,14 @@ app.post("/signin", async (req, res) => {
       [username]
     );
     if(userResult.rows.length === 0) {
-      return res.status(401).json({error: "Invalid username or password."});
+      return error(res, 401, "Invalid username or password.");
     }
 
     const user = userResult.rows[0];
 
     const isValidPassword = await argon2.verify(user.password_hash, password);
     if(!isValidPassword) {
-      return res.status(401).json({error: "Invalid username or password."});
+      return error(res, 401, "Invalid username or password.");
     }
 
     const sessionToken = crypto.randomBytes(32).toString("hex");
@@ -158,7 +162,7 @@ app.post("/signin", async (req, res) => {
     }});
 
   } catch (err) {
-    return res.status(500).json({error: "Sign in error. Please try again."});
+    return error(res, 500, "Sign in error. Please try again.");
   }
 });
 

@@ -22,27 +22,20 @@ const signBtn = $("#sign-btn");
 const profileBtn = $("#profile-btn");
 const container = $("#container");
 
-const welcomeText = "<h2>Welcome to Textbit</h2>";
-const signinMsg = "<text id='sign-msg'></text>";
-const nameInput = "<input type='text' id='Fullname' class='user-input active-input' placeholder='Fullname' required/>";
-const usernameInput = "<input type='text' id='Username' class='user-input active-input' placeholder='Username' required/>";
-const passwordInput = "<input type='password' id='Password' class='user-input active-input' placeholder='Password' required/>";
-const submitBtn = "<button type='submit' id='submit'></button>"
-const signinForm = "<form id='user-form'>"
-            + welcomeText + signinMsg
-            + usernameInput + passwordInput
-            + submitBtn + "</form>";
-const signupForm = "<form id='user-form'>"
-            + welcomeText + signinMsg + nameInput
-            + usernameInput + passwordInput
-            + submitBtn + "</form>";
-
 function inboxgenerate(){
     signBtn.classList.remove("sign");
     signBtn.textContent = "";
     profileBtn.classList.add("profile-btn");
     searchCont.classList.add("search-container");
     container.innerHTML = "Welcome. This is your inbox.";
+}
+
+function inputfocus(){
+    $("#user-form")?.addEventListener("focusin", (e)=> {
+        if(e.target.matches(".user-input")){
+            inputstate(e.target, e.target.id, false);
+        }
+    });
 }
 
 function signup_form(){
@@ -54,10 +47,7 @@ function signup_form(){
     const signmsg = $("#sign-msg");
     const submit = $("#submit");
     signmsg && (signmsg.textContent = "Create a new account.");
-    $("#user-form")?.addEventListener("focusin", (e)=> {
-        if(e.target.matches('.user-input')) 
-            inputstate(e.target, e.target.id, false);
-    });
+    inputfocus();
     submit && (submit.textContent = "Sign up");
     submit?.addEventListener("click", async (e)=> {
         e.preventDefault();
@@ -103,10 +93,7 @@ function signin_form(){
     const submit = $("#submit");
     console.log($("#user-form"));
     signmsg && (signmsg.textContent = "Sign in to your account.");
-    $("#user-form")?.addEventListener("focusin", (e)=> {
-        if(e.target.matches('.user-input')) 
-            inputstate(e.target, e.target.id, false);
-    });
+    inputfocus();
     submit && (submit.textContent = "Sign in");
     submit?.addEventListener("click", async (e)=> {
         e.preventDefault();
