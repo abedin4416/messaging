@@ -38,11 +38,28 @@ document.addEventListener("DOMContentLoaded", async ()=> {
 });
 
 optionCont.addEventListener("click", async (e)=>{
+    const search = $("#search-container");
+    const searchBox = $("#search-box");
+    const searchClose = $("#search-close");
     if(e.target.closest("#sign-btn")){
         const path = window.location.pathname;
         const newPath = path === "/"? "/signup":"/";
         history.pushState({path: newPath}, "", newPath);
         updateUI(newPath);
+    }
+    else if(e.target.closest("#search-btn")){
+        search.classList.remove("search-container");
+        search.classList.add("search-container-float");
+        searchBox.classList.remove("search-box");
+        searchBox.classList.add("search-box-float");
+        searchClose.classList.add("search-close");
+    }
+    else if(e.target.closest("#search-close")){
+        search.classList.remove("search-container-float");
+        search.classList.add("search-container");
+        searchBox.classList.remove("search-box-float");
+        searchBox.classList.add("search-box");
+        searchClose.classList.remove("search-close");
     }
 });
 
