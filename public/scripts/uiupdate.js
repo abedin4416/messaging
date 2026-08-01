@@ -5,28 +5,38 @@ function inputstate(element, placeholder, isError = true){
     if(isError) {
         element.classList.add("emptyinput")
         element.classList.remove("active-input");
+        element.placeholder = placeholder+" is required";
     }
     else {
         element.classList.remove("emptyinput");
         element.classList.add("active-input");
+        element.placeholder = placeholder;
     }
-    element.placeholder = placeholder;
 }
+
+const welcomeText = "<h2>Welcome to Textbit</h2>";
+const signinMsg = "<text id='sign-msg'></text>";
+const nameInput = "<input type='text' id='Fullname' class='user-input active-input' placeholder='Fullname'/>";
+const usernameInput = "<input type='text' id='Username' class='user-input active-input' placeholder='Username'/>";
+const passwordInput = "<input type='password' id='Password' class='user-input active-input' placeholder='Password'/>";
+const submitBtn = "<button type='submit' id='submit'></button>";
+const signinForm = "<form id='user-form'>"+welcomeText+signinMsg+usernameInput+passwordInput+submitBtn+"</form>";
+const signupForm = "<form id='user-form'>"+ welcomeText+signinMsg+nameInput+usernameInput+passwordInput+submitBtn+"</form>";
+
+const searchBox = "<div id='search-box'></div>";
+const searchBtn = "<div id='search-btn'></div>";
+const profileBtn = "<div id='profile-btn'></div>";
+const signinBtn = "<div id='sign-btn'>Sign in</div>";
+const signupBtn = "<div id='sign-btn'>Sign up</div>";
 
 const back = $("#back");
 const icon = $("#icon");
 const title = $("#title");
-const searchCont = $("#search-container");
-const search = $("#search");
-const signBtn = $("#sign-btn");
-const profileBtn = $("#profile-btn");
 const container = $("#container");
+const optionCont = $("#option-container")
 
 function inboxgenerate(){
-    signBtn.classList.remove("sign");
-    signBtn.textContent = "";
-    profileBtn.classList.add("profile-btn");
-    searchCont.classList.add("search-container");
+    optionCont.innerHTML = searchBox+profileBtn;
     container.innerHTML = "Welcome. This is your inbox.";
 }
 
@@ -40,85 +50,20 @@ function inputfocus(){
 
 function signup_form(){
     container.innerHTML = signupForm;
-    signBtn.classList.add("sign");
-    profileBtn.classList.remove("profile-btn");
-    signBtn.textContent = "Sign in";
-    searchCont.classList.remove("search-container");
+    optionCont.innerHTML = signinBtn;
     const signmsg = $("#sign-msg");
     const submit = $("#submit");
     signmsg && (signmsg.textContent = "Create a new account.");
     inputfocus();
     submit && (submit.textContent = "Sign up");
-    submit?.addEventListener("click", async (e)=> {
-        e.preventDefault();
-        const fullname = $("#Fullname");
-        const username = $("#Username");
-        const password = $("#Password");
-        const signmsg = $("#sign-msg");
-        if(!fullname?.value){
-            inputstate(fullname, "Name is required");
-        }
-        else if(!username?.value){
-            inputstate(username, "Username cannot be empty");
-        }
-        else if(!password?.value){
-            inputstate(password, "Password cannot be empty");
-        }
-        else {
-            const response = await server("/create", "POST", {
-                fullname:fullname.value, 
-                username:username.value,
-                password:password.value
-            });
-            if(response.status == 409){
-                const data = await response.json();
-                signmsg && (signmsg.textContent = data.error);
-                signmsg?.classList.add("error");
-            }
-            else if(response.status == 201){
-                history.pushState({path: "/"}, "", "/");
-                inboxgenerate();
-            }
-        }
-    });
 }
 
 function signin_form(){
     container.innerHTML = signinForm;
-    signBtn.classList.add("sign");
-    profileBtn.classList.remove("profile-btn");
-    signBtn.textContent = "Sign up";
-    searchCont.classList.remove("search-container");
+    optionCont.innerHTML = signupBtn;
     const signmsg = $("#sign-msg");
     const submit = $("#submit");
-    console.log($("#user-form"));
     signmsg && (signmsg.textContent = "Sign in to your account.");
     inputfocus();
     submit && (submit.textContent = "Sign in");
-    submit?.addEventListener("click", async (e)=> {
-        e.preventDefault();
-        const username = $("#Username");
-        const password = $("#Password");
-        const signmsg = $("#sign-msg");
-        if(!username?.value){
-            inputstate(username, "Username cannot be empty");
-        }
-        else if(!password?.value){
-            inputstate(password, "Password cannot be empty");
-        }
-        else {
-            const response = await server("/signin", "POST", {
-                username: username.value,
-                password: password.value
-            });
-            if(response.status == 401 || response.status == 500){
-                const data = await response.json();
-                signmsg && (signmsg.textContent = data.error);
-                signmsg?.classList.add("error");
-            }
-            else if(response.status == 201){
-                inboxgenerate();
-            }
-        }
-    });
 }

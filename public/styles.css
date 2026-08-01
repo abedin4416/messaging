@@ -87,27 +87,33 @@ body{
     align-content:center;
 }
 
-.search-container{
+#search-btn{
     width:2.3rem;
     height:2.3rem;
     border: 1px dashed rgb(59, 59, 84);
+    background-image: url("/res/search.png");
+    background-repeat: no-repeat;
+    background-size: 50%;
+    background-position: center;
     border-radius: 2rem;
     display:grid;
     justify-items: center;
     align-items: center;
     transition: transform 0.3s ease;
 }
-.search-container:hover{
+#search-btn:hover{
     transform: scale(1.03);
 }
 
-#search-icon{
-    width:100%;
-    height:100%;
-    background-image: url("/res/search.png");
+#search-box{
+    width:40rem;
+    height:2.3rem;
+    border:1px dashed rgb(59, 59, 84);
+    background-image: url("res/search.png");
     background-repeat: no-repeat;
     background-size: 50%;
-    background-position: center;
+    background-position: left;
+    border-radius:2rem;
 }
 
 #option-container{
@@ -117,7 +123,7 @@ body{
     align-items: center;
 }
 
-.sign{
+#sign-btn{
     height:2.3rem;
     border-radius:3rem;
     cursor:default;
@@ -131,10 +137,10 @@ body{
     color:white;
     font-weight: 500;
 }
-.sign:hover{
+#sign-btn:hover{
     transform: scale(1.03);
 }
-.profile-btn{
+#profile-btn{
     width:2.3rem;
     height:2.3rem;
     border-radius:3rem;
@@ -143,7 +149,7 @@ body{
     background:var(--blue);
     margin-left:0.5rem;
 }
-.profile-btn:hover{
+#profile-btn:hover{
     transform: scale(1.03);
 }
 
