@@ -47,7 +47,7 @@ app.post("/create", async (req, res) => {
     await db.query(insertQuery, [fullname, username, hashedPassword]);
     
     const sessionToken = crypto.randomBytes(32).toString("hex");
-    const expiresAt = new Date(Date.now()+1*24*60*60*1000);
+    const expiresAt = new Date(Date.now()+1*60*60*1000);
 
     await db.query(
       `INSERT INTO sessions (username, session_token, expires_at)
