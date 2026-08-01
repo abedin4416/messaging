@@ -37,7 +37,7 @@ const optionCont = $("#option-container")
 
 function inboxgenerate(){
     optionCont.innerHTML = searchBox+searchBtn+profileBtn;
-    container.innerHTML = "Welcome. This is your inbox.";
+    container.innerHTML = "&nbspWelcome. This is your inbox.";
 }
 
 function inputfocus(){

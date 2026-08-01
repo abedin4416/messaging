@@ -10,7 +10,7 @@
     --l-teal: rgb(200,253,255);
     --yellow: rgb(254, 218, 70);
     --l-yellow: rgb(255,240,180);
-    --l-grey: rgb(245,252,252);
+    --l-grey: rgb(241, 248, 248);
 }
 
 @font-face {
@@ -94,6 +94,7 @@ body{
     height:2.3rem;
     border:1px dashed rgb(59, 59, 84);
     background-image: url("res/search.png");
+    background-color: var(--l-grey);;
     background-repeat: no-repeat;
     background-size: 5%;
     background-position: 0.7rem center;
@@ -224,7 +225,7 @@ body{
     display:none;
 }
 
-@container header (max-width: 30rem){
+@container header (max-width: 35rem){
     #search-box{
         display:none;
     }
