@@ -244,3 +244,8 @@ body{
         display:block;
     }
 }
+@media (min-width:48rem){
+    #search-btn{
+        display:none;
+    }
+}
