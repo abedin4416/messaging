@@ -175,7 +175,10 @@ body{
     border-radius:3rem;
     cursor:default;
     transition: transform 0.3s ease;
-    background:var(--blue);
+    background-image:url("/res/profile1.svg");
+    background-size:100%;
+    background-repeat:no-repeat;
+    background-position: center;
     margin-left:0.5rem;
 }
 #profile-btn:hover{
