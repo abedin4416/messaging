@@ -33,6 +33,7 @@ html, body{
     margin:0;
     font-family: "gsanscode";
     background-color: white;
+    overscroll-behavior-y: none;
 }
 
 .hidden{
