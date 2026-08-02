@@ -16,7 +16,6 @@ async function server(api, method = "GET", data = null) {
     }
 }
 
-
 async function updateUI(path){
     if(path=="/"){
         const res = await server("/session");
@@ -48,22 +47,24 @@ optionCont.addEventListener("click", async (e)=>{
         updateUI(newPath);
     }
     else if(e.target.closest("#search-btn")){
-        search.classList.remove("search-container");
-        search.classList.add("search-container-float");
-        searchBox.classList.remove("search-box");
-        searchBox.classList.add("search-box-float");
+        switchStyle(search);
+        switchStyle(searchBox);
+        searchBox.focus();
         searchClose.classList.add("search-close");
     }
     else if(e.target.closest("#search-close")){
-        search.classList.remove("search-container-float");
-        search.classList.add("search-container");
-        searchBox.classList.remove("search-box-float");
-        searchBox.classList.add("search-box");
+        switchStyle(search);
+        switchStyle(searchBox);
         searchClose.classList.remove("search-close");
+    }
+    else if(e.target.closest("#profile-btn")){
+        switchStyle($("#profile-menu"));
     }
 });
 
 container.addEventListener("click", async (e)=> {
+    $("#profile-menu")?.classList.remove("profile-menu-float");
+    $("#profile-menu")?.classList.add("profile-menu");
     if(e.target.closest("#submit")){
         e.preventDefault();
         const path = window.location.pathname;

@@ -16,16 +16,11 @@
 @font-face {
     font-family: "gsanscode";
     src: url("res/gsanscode.ttf") format("truetype");
-    font-weight:400;
-    font-style: normal;
     font-display: swap;
 }
-
 @font-face {
     font-family: "gsansflex";
     src: url("res/gsansflex.ttf") format("truetype");
-    font-weight:400;
-    font-style: normal;
     font-display: swap;
 }
 
@@ -35,8 +30,17 @@
 html, body{
     margin:0;
     padding:0;
-    font-family: "gsanscode";
+    font-family: "gsansflex";
     background-color: white;
+    height:100%;
+}
+body{
+    display:grid;
+    grid-template-rows: 3rem 1fr;
+}
+
+input:focus{
+    outline:none;
 }
 
 .hidden{
@@ -89,7 +93,7 @@ html, body{
 }
 
 #title{
-    font-weight: bold;
+    font-weight: 600;
     font-size: 16pt;
     align-content:center;
 }
@@ -193,6 +197,8 @@ html, body{
 #container{
     margin-top:4rem;
     display:grid;
+    grid-row: 2;
+    overflow: hidden;
 }
 
 #user-form-msg{
@@ -296,4 +302,53 @@ html, body{
     #search-btn:hover{
         transform: scale(1.03);
     }
+}
+
+.profile-menu{
+    display:none;
+}
+
+.profile-menu-float{
+    position: absolute;
+    display:grid;
+    grid-template-rows: 1fr 1fr 1fr;
+    width:15rem;
+    background:white;
+    left:auto;
+    right:1rem;
+    top:3.5rem;
+    border-radius: 1.5rem;
+    box-shadow: 0px 0px 10px 0px #dfdfdf;
+    margin:0;
+    padding:0.5rem;
+    box-sizing: border-box;
+}
+
+#profile-pic{
+    background-image:url("res/profile.png");
+}
+#profile-name{
+    background-image:url("res/edit.png");
+}
+#signout-btn{
+    background-image:url("res/logout.png");
+    color:var(--red);
+}
+.profile-menu-item{
+    background-size:10%;
+    background-repeat: no-repeat;
+    background-position: 0.7rem center;
+    height:2rem;
+    padding:1.3rem;
+    padding-left:2.7rem;
+    border-radius:0.7rem;
+    font-size:13pt;
+    box-sizing: border-box;
+    display:grid;
+    align-content:center;
+    user-select: none;
+    cursor:default;
+}
+.profile-menu-item:hover{
+    background-color: rgb(235,235,240);
 }

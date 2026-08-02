@@ -1,19 +1,3 @@
-function $(a){return document.querySelector(a);}
-function createEl(a){return document.createElement(a);}
-
-function inputstate(element, placeholder, isError = true){
-    if(isError) {
-        element.classList.add("emptyinput")
-        element.classList.remove("active-input");
-        element.placeholder = placeholder+" is required";
-    }
-    else {
-        element.classList.remove("emptyinput");
-        element.classList.add("active-input");
-        element.placeholder = placeholder;
-    }
-}
-
 const welcomeText = "<h2>Welcome to Textbit</h2>";
 const signinMsg = "<text id='sign-msg'></text>";
 const nameInput = "<input type='text' id='Fullname' class='user-input active-input' placeholder='Fullname'/>";
@@ -30,14 +14,33 @@ const profileBtn = "<div id='profile-btn'></div>";
 const signinBtn = "<div id='sign-btn'>Sign in</div>";
 const signupBtn = "<div id='sign-btn'>Sign up</div>";
 
+const profilePic = "<div id='profile-pic' class='profile-menu-item'>Profile image</div>";
+const profileName = "<div id='profile-name' class='profile-menu-item'>Change Name</div>";
+const signoutBtn = "<div id='signout-btn' class='profile-menu-item'>Sign out</div>";
+const profileMenu = "<div id='profile-menu' class='profile-menu'>"+profilePic+profileName+signoutBtn+"</div>";
+
+function $(a){return document.querySelector(a);}
+function createEl(a){return document.createElement(a);}
+
 const back = $("#back");
 const icon = $("#icon");
 const title = $("#title");
 const container = $("#container");
 const optionCont = $("#option-container")
 
+function inputstate(e, ph, err = true){
+    e.classList.toggle("emptyinput", err);
+    e.classList.toggle("active-input", !err);
+    e.placeholder = `${ph}${err? " is required" : ""}`;
+}
+
+function switchStyle(e){
+        e.classList.toggle(e.id);
+        e.classList.toggle(e.id+"-float");
+}
+
 function inboxgenerate(){
-    optionCont.innerHTML = searchCont+searchBtn+profileBtn;
+    optionCont.innerHTML = searchCont+searchBtn+profileBtn+profileMenu;
     container.innerHTML = "&nbspWelcome. This is your inbox.";
 }
 
@@ -52,19 +55,15 @@ function inputfocus(){
 function signup_form(){
     container.innerHTML = signupForm;
     optionCont.innerHTML = signinBtn;
-    const signmsg = $("#sign-msg");
-    const submit = $("#submit");
-    signmsg && (signmsg.textContent = "Create a new account.");
+    $("#sign-msg").textContent = "Create a new account.";
+    $("#submit").textContent = "Sign up";
     inputfocus();
-    submit && (submit.textContent = "Sign up");
 }
 
 function signin_form(){
     container.innerHTML = signinForm;
     optionCont.innerHTML = signupBtn;
-    const signmsg = $("#sign-msg");
-    const submit = $("#submit");
-    signmsg && (signmsg.textContent = "Sign in to your account.");
+    $("#sign-msg").textContent = "Sign in to your account.";
+    $("#submit").textContent = "Sign in";
     inputfocus();
-    submit && (submit.textContent = "Sign in");
 }
