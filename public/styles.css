@@ -123,7 +123,7 @@ body{
 }
 .search-container-float{
     max-width:35rem;
-    height:2.3rem;
+    min-height:2.5rem;
     position: absolute;
     left:0.8rem;
     right:0.8rem;
