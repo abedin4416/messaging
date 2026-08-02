@@ -109,15 +109,19 @@ app.get("/session", async (req, res) => {
   }
 });
 
-app.post("/logout", async (req, res) => {
+app.post("/signout", async (req, res) => {
   const sessionToken = req.cookies.session_token;
 
   if(sessionToken) {
-    await db.query("DELETE FROM sessions WHERE sessions_token = $1;", [sessionToken]);
+    await db.query("DELETE FROM sessions WHERE session_token = $1;", [sessionToken]);
   }
-  res.clearCookie("session_token");
-  return res.join({success: true});
-})
+  res.clearCookie("session_token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax"
+  });
+  return res.json({success: true});
+});
 
 app.post("/signin", async (req, res) => {
   const {username, password} = req.body;

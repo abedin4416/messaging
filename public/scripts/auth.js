@@ -2,7 +2,7 @@ async function server(api, method = "GET", data = null) {
     try {
         const fetchOptions = {
             method: method.toUpperCase(),
-            headers: {}
+            headers: {},
         };
         if (data && fetchOptions.method !== "GET") {
             fetchOptions.headers["Content-Type"] = "application/json";
@@ -15,6 +15,8 @@ async function server(api, method = "GET", data = null) {
         throw error;
     }
 }
+
+
 
 async function updateUI(path){
     if(path=="/"){
@@ -59,6 +61,14 @@ optionCont.addEventListener("click", async (e)=>{
     }
     else if(e.target.closest("#profile-btn")){
         switchStyle($("#profile-menu"));
+    }
+    else if(e.target.closest("#signout-btn")){
+        const response = await fetch("/signout",{
+            method: "POST",
+            credentials: "include"
+        });
+        const data = await response.json();
+        if(data.success) signin_form();
     }
 });
 
