@@ -16,8 +16,9 @@ const signupBtn = "<div id='sign-btn'>Sign up</div>";
 
 const profilePic = "<div id='profile-pic' class='profile-menu-item'>Profile image</div>";
 const profileName = "<div id='profile-name' class='profile-menu-item'>Change Name</div>";
+const deleteProf = "<div id='delete-profile' class='profile-menu-item'>Delete profile</div>";
 const signoutBtn = "<div id='signout-btn' class='profile-menu-item'>Sign out</div>";
-const profileMenu = "<div id='profile-menu' class='profile-menu'>"+profilePic+profileName+signoutBtn+"</div>";
+const profileMenu = "<div id='profile-menu' class='profile-menu'>"+profilePic+profileName+deleteProf+signoutBtn+"</div>";
 
 function $(a){return document.querySelector(a);}
 function createEl(a){return document.createElement(a);}

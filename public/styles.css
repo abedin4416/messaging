@@ -85,7 +85,7 @@ input:focus{
     width:2.3rem;
     height:2.3rem;
     border-radius:2rem;
-    background-image: url("/res/icon.svg");
+    background-image: url("/res/icon1.svg");
     background-repeat: no-repeat;
     background-size: 85%;
     background-position: center;
@@ -196,6 +196,7 @@ input:focus{
 
 #container{
     grid-row: 2;
+    margin-top:1rem;
 }
 
 #user-form-msg{
@@ -330,6 +331,9 @@ input:focus{
 #signout-btn{
     background-image:url("res/logout.png");
     color:var(--red);
+}
+#delete-profile{
+    background-image:url("res/delete-user.png");
 }
 .profile-menu-item{
     background-size:10%;
