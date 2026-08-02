@@ -29,9 +29,10 @@
     font-display: swap;
 }
 
-body{
+html, body{
     margin:0;
     font-family: "gsanscode";
+    background-color: white;
 }
 
 .hidden{
