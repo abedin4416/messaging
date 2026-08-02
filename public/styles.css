@@ -195,10 +195,7 @@ input:focus{
 }
 
 #container{
-    margin-top:4rem;
-    display:grid;
     grid-row: 2;
-    overflow: hidden;
 }
 
 #user-form-msg{
