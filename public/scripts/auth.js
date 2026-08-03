@@ -16,8 +16,6 @@ async function server(api, method = "GET", data = null) {
     }
 }
 
-
-
 async function updateUI(path){
     if(path=="/"){
         const res = await server("/session");

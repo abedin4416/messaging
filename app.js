@@ -16,14 +16,6 @@ function error(res, status, err) {
   return res.status(status).json({error:err});
 }
 
-app.post("/", (req, res) => {
-    res.json({signtext: "Sign in to your account."});
-});
-
-app.post("/signup", (req, res) => {
-    res.json({signtext: "Create a new account."});
-});
-
 app.post("/create", async (req, res) => {
   const { fullname, username, password } = req.body;
 
@@ -47,7 +39,7 @@ app.post("/create", async (req, res) => {
     await db.query(insertQuery, [fullname, username, hashedPassword]);
     
     const sessionToken = crypto.randomBytes(32).toString("hex");
-    const expiresAt = new Date(Date.now()+1*60*60*1000);
+    const expiresAt = new Date(Date.now()+1*24*60*60*1000);
 
     await db.query(
       `INSERT INTO sessions (username, session_token, expires_at)
@@ -146,7 +138,7 @@ app.post("/signin", async (req, res) => {
     }
 
     const sessionToken = crypto.randomBytes(32).toString("hex");
-    const expiresAt = new Date(Date.now() + 1 * 60 * 60 * 1000);
+    const expiresAt = new Date(Date.now() + 1 * 24 * 60 * 60 * 1000);
 
     await db.query(
       `INSERT INTO sessions (username, session_token, expires_at) VALUES ($1, $2, $3);`,

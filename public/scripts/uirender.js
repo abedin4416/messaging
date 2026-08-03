@@ -39,9 +39,9 @@ function inputstate(e, ph, err = true){
 }
 
 function stylechange(e, x){
-        x = x==undefined? e.classList.contains(e.id):x;
-        e.classList.toggle(e.id, !x);
-        e.classList.toggle(e.id+"-float", x);
+    x = x==undefined? e.classList.contains(e.id):x;
+    e.classList.toggle(e.id, !x);
+    e.classList.toggle(e.id+"-float", x);
 }
 
 function inboxgenerate(){

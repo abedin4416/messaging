@@ -120,6 +120,7 @@ input:focus{
     box-sizing: border-box;
     border:0px;
     font-size:12pt;
+    font-family: "gsanscode";
 }
 
 .search-box{
