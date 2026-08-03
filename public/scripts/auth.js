@@ -87,7 +87,7 @@ header.addEventListener("click", (e)=>{
     }
 });
 
-optionCont.addEventListener("keydown", (e)=>{
+searchCont.addEventListener("keydown", (e)=>{
     if(e.key === "Enter"){
         e.preventDefault();
         alert($("#search-box").value);
