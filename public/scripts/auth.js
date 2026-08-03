@@ -39,9 +39,10 @@ document.addEventListener("DOMContentLoaded", async ()=> {
 });
 
 optionCont.addEventListener("click", async (e)=>{
+    e.stopPropagation();
     const search = $("#search-container");
     const searchBox = $("#search-box");
-    const searchClose = $("#search-close");
+    const searchCls = $("#search-close");
     if(e.target.closest("#sign-btn")){
         const path = window.location.pathname;
         const newPath = path === "/"? "/signup":"/";
@@ -49,18 +50,17 @@ optionCont.addEventListener("click", async (e)=>{
         updateUI(newPath);
     }
     else if(e.target.closest("#search-btn")){
-        switchStyle(search);
-        switchStyle(searchBox);
+        stylechange(search, 1);
+        stylechange(searchBox, 1);
+        stylechange($("#profile-menu"), 0);
         searchBox.focus();
-        searchClose.classList.add("search-close");
+        searchCls.classList.add("search-close");
     }
-    else if(e.target.closest("#search-close")){
-        switchStyle(search);
-        switchStyle(searchBox);
-        searchClose.classList.remove("search-close");
+    else if(e.target.closest("#search-container")){
+        stylechange($("#profile-menu"), 0);
     }
     else if(e.target.closest("#profile-btn")){
-        switchStyle($("#profile-menu"));
+        stylechange($("#profile-menu"));
     }
     else if(e.target.closest("#signout-btn")){
         const response = await fetch("/signout",{
@@ -69,6 +69,28 @@ optionCont.addEventListener("click", async (e)=>{
         });
         const data = await response.json();
         if(data.success) signin_form();
+    }
+});
+
+header.addEventListener("click", (e)=>{
+    stylechange($("#profile-menu"), false);
+    const search = $("#search-container");
+    const searchBox = $("#search-box");
+    const searchCls = $("#search-close");
+    if(e.target.closest("#search-close")){
+        stylechange(search, 0);
+        stylechange(searchBox, 0);
+        searchCls.classList.remove("search-close");
+    }
+    else if(e.target.closest("#search-container")){
+        stylechange($("#profile-menu"), 0);
+    }
+});
+
+optionCont.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter"){
+        e.preventDefault();
+        alert($("#search-box").value);
     }
 });
 

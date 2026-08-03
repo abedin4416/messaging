@@ -7,9 +7,9 @@ const submitBtn = "<button type='submit' id='submit'></button>";
 const signinForm = "<form id='user-form'>"+welcomeText+signinMsg+usernameInput+passwordInput+submitBtn+"</form>";
 const signupForm = "<form id='user-form'>"+ welcomeText+signinMsg+nameInput+usernameInput+passwordInput+submitBtn+"</form>";
 
-const searchInput = "<input id='search-box' class='search-box' placeholder='Search for people'></input>";
-const searchCont = "<div id='search-container' class='search-container'>"+searchInput+"<div id='search-close'></div></div>";
-const searchBtn = "<div id='search-btn'></div>";
+const searchClose = "<div id='search-close'></div>";
+const searchInput = "<input id='search-box' class='search-box' placeholder='Search for people'></input>"+searchClose;
+const searchBtn = "<div id='search-btn'>Search</div>";
 const profileBtn = "<div id='profile-btn'></div>";
 const signinBtn = "<div id='sign-btn'>Sign in</div>";
 const signupBtn = "<div id='sign-btn'>Sign up</div>";
@@ -20,14 +20,17 @@ const deleteProf = "<div id='delete-profile' class='profile-menu-item'>Delete pr
 const signoutBtn = "<div id='signout-btn' class='profile-menu-item'>Sign out</div>";
 const profileMenu = "<div id='profile-menu' class='profile-menu'>"+profilePic+profileName+deleteProf+signoutBtn+"</div>";
 
+
 function $(a){return document.querySelector(a);}
 function createEl(a){return document.createElement(a);}
 
+const header = $("#header");
 const back = $("#back");
 const icon = $("#icon");
 const title = $("#title");
 const container = $("#container");
-const optionCont = $("#option-container")
+const optionCont = $("#option-container");
+const searchCont = $("#search-container");
 
 function inputstate(e, ph, err = true){
     e.classList.toggle("emptyinput", err);
@@ -35,14 +38,16 @@ function inputstate(e, ph, err = true){
     e.placeholder = `${ph}${err? " is required" : ""}`;
 }
 
-function switchStyle(e){
-        e.classList.toggle(e.id);
-        e.classList.toggle(e.id+"-float");
+function stylechange(e, x){
+        x = x==undefined? e.classList.contains(e.id):x;
+        e.classList.toggle(e.id, !x);
+        e.classList.toggle(e.id+"-float", x);
 }
 
 function inboxgenerate(){
-    optionCont.innerHTML = searchCont+searchBtn+profileBtn+profileMenu;
-    container.innerHTML = "&nbspWelcome. This is your inbox.";
+    optionCont.innerHTML = searchBtn+profileBtn+profileMenu;
+    searchCont.innerHTML = searchInput;
+    container.innerHTML = "";
 }
 
 function inputfocus(){
