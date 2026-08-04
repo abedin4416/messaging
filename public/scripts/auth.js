@@ -23,6 +23,8 @@ async function updateUI(path){
         if(data.loggedIn){
             inboxgenerate();
             $("#profile-title").textContent = data.user.fullname;
+            $("#profile-btn").style.background="url("+data.user.profilepic+")";
+            $("#profile-btn").style.backgroundSize = "100%";
         }
         else {
             signin_form();
@@ -96,6 +98,8 @@ searchCont.addEventListener("keydown", async (e)=>{
         stylechange($("#search-res-container"), 1);
         $("#search-name").innerText = data.fullname;
         $("#search-username").innerText = data.username;
+        $("#search-icon").style.background="url("+data.profilepic+")";
+        $("#search-icon").style.backgroundSize = "100%";
     }
 });
 
@@ -127,6 +131,8 @@ container.addEventListener("click", async (e)=> {
                 path == '/signup' && history.pushState({path: "/"}, "", "/");
                 inboxgenerate();
                 $("#profile-title").textContent = data.user.fullname;
+                $("#profile-btn").style.background="url("+data.user.profilepic+")";
+                $("#profile-btn").style.backgroundSize = "100%";
             }
         }
     }

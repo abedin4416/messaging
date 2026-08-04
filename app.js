@@ -16,6 +16,13 @@ function error(res, status, err) {
   return res.status(status).json({error:err});
 }
 
+function default_avatar(){
+  let avatar = "https://ik.imagekit.io/9xzknibra/profile_avatar";
+  let rand = Math.floor(Math.random()*4)+1;
+  avatar += rand+".svg";
+  return avatar;
+}
+
 app.post("/create", async (req, res) => {
   const { fullname, username, password } = req.body;
 
@@ -32,11 +39,12 @@ app.post("/create", async (req, res) => {
     await db.query("BEGIN;");
 
     const hashedPassword = await argon2.hash(password);
+    const avatar = default_avatar();
     const insertQuery = `
-      INSERT INTO users (full_name, username, password_hash)
-      VALUES ($1, $2, $3);`;
+      INSERT INTO users (full_name, username, password_hash, avatar_url)
+      VALUES ($1, $2, $3, $4);`;
     
-    await db.query(insertQuery, [fullname, username, hashedPassword]);
+    await db.query(insertQuery, [fullname, username, hashedPassword, avatar]);
     
     const sessionToken = crypto.randomBytes(32).toString("hex");
     const expiresAt = new Date(Date.now()+1*24*60*60*1000);
@@ -56,7 +64,11 @@ app.post("/create", async (req, res) => {
       expires: expiresAt,
     });
     
-    return res.status(201).json({loggedIn: true, user: username});
+    return res.status(201).json({loggedIn: true, user:{ 
+      fullname:fullname,
+      username:username,
+      profilepic:avatar
+    }});
 
   } catch (err) {
     await db.query("ROLLBACK;");
@@ -75,7 +87,7 @@ app.get("/session", async (req, res) => {
     }
 
     const query = `
-      SELECT u.username, u.full_name
+      SELECT u.username, u.full_name, u.avatar_url
       FROM sessions s
       JOIN users u ON s.username = u.username
       WHERE s.session_token = $1 AND s.expires_at > NOW();
@@ -93,6 +105,7 @@ app.get("/session", async (req, res) => {
       user: {
         username: session.username,
         fullname: session.full_name,
+        profilepic: session.avatar_url
       },
     });
   } catch (err) {
@@ -123,7 +136,7 @@ app.post("/signin", async (req, res) => {
 
   try {
     const userResult = await db.query(
-      "SELECT full_name, username, password_hash FROM users WHERE username = $1;",
+      "SELECT full_name, username, password_hash, avatar_url FROM users WHERE username = $1;",
       [username]
     );
     if(userResult.rows.length === 0) {
@@ -153,7 +166,8 @@ app.post("/signin", async (req, res) => {
     
     return res.status(201).json({loggedIn: true, user:{
       fullname: user.full_name,
-      username: user.username
+      username: user.username,
+      profilepic: user.avatar_url
     }});
 
   } catch (err) {
@@ -168,7 +182,7 @@ app.post("/search", async (req, res)=> {
   }
   try{
     const searchQuery = `
-      SELECT full_name, username
+      SELECT full_name, username, avatar_url
       FROM users
       WHERE username = $1;`;
 
@@ -180,7 +194,8 @@ app.post("/search", async (req, res)=> {
 
     return res.json({
       fullname: result.rows[0].full_name,
-      username: result.rows[0].username
+      username: result.rows[0].username,
+      profilepic: result.rows[0].avatar_url
     });
   } catch (err){
     return res.status(500).json({msg: "Failed to search user."});
