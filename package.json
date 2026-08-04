@@ -7,11 +7,14 @@
         "dev": "nodemon app.js"
     },
     "dependencies": {
+        "@imagekit/nodejs": "^7.10.0",
         "argon2": "^0.45.1",
         "cookie-parser": "^1.4.7",
         "dotenv": "^17.4.2",
         "express": "^4.19.0",
-        "pg": "^8.22.0"
+        "multer": "^2.2.0",
+        "pg": "^8.22.0",
+        "uuid": "^14.0.1"
     },
     "description": "",
     "repository": {
