@@ -85,10 +85,16 @@ header.addEventListener("click", (e)=>{
     }
 });
 
-searchCont.addEventListener("keydown", (e)=>{
+searchCont.addEventListener("keydown", async (e)=>{
     if(e.key === "Enter"){
         e.preventDefault();
-        alert($("#search-box").value);
+        const res = await server("/search", "POST", {
+            username: $("#search-box").value.trim()
+        });
+        const data = await res.json();
+        stylechange($("#search-res-container"), 1);
+        $("#search-name").innerText = data.fullname;
+        $("#search-username").innerText = data.username;
     }
 });
 

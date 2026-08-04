@@ -161,6 +161,32 @@ app.post("/signin", async (req, res) => {
   }
 });
 
+app.post("/search", async (req, res)=> {
+  const { username } = req.body;
+  if(!username || username.trim() === ""){
+    return res.status(400);
+  }
+  try{
+    const searchQuery = `
+      SELECT full_name, username
+      FROM users
+      WHERE username = $1;`;
+
+    const result = await db.query(searchQuery, [username.trim()]);
+
+    if(result.rows.length === 0){
+      return res.status(404).json({error: "User not found."});
+    }
+
+    return res.json({
+      fullname: result.rows[0].full_name,
+      username: result.rows[0].username
+    });
+  } catch (err){
+    return res.status(500).json({msg: "Failed to search user."});
+  }
+});
+
 app.get("*", (req, res) => {
     res.sendFile(path.join(import.meta.dirname, 'public', 'index.html'));
 });

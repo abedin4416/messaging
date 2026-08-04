@@ -20,6 +20,8 @@ const deleteProf = "<div id='delete-profile' class='profile-menu-item'>Delete pr
 const signoutBtn = "<div id='signout-btn' class='profile-menu-item'>Sign out</div>";
 const profileMenu = "<div id='profile-menu' class='profile-menu'>"+profilePic+profileName+deleteProf+signoutBtn+"</div>";
 
+const searchRes = "<div id='search-res-container'class='search-res-container'><div id='search-result'><div id='search-icon'></div><div id='search-name'></div><div id='search-username'></div></div></div>";
+
 
 function $(a){return document.querySelector(a);}
 function createEl(a){return document.createElement(a);}
@@ -46,8 +48,9 @@ function stylechange(e, x){
 
 function inboxgenerate(){
     optionCont.innerHTML = searchBtn+profileBtn+profileMenu;
+    searchCont.classList.remove("hidden");
     searchCont.innerHTML = searchInput;
-    container.innerHTML = "";
+    container.innerHTML = searchRes;
 }
 
 function inputfocus(){
@@ -60,6 +63,7 @@ function inputfocus(){
 
 function signup_form(){
     container.innerHTML = signupForm;
+    searchCont.classList.add("hidden");
     optionCont.innerHTML = signinBtn;
     $("#sign-msg").textContent = "Create a new account.";
     $("#submit").textContent = "Sign up";
@@ -68,6 +72,7 @@ function signup_form(){
 
 function signin_form(){
     container.innerHTML = signinForm;
+    searchCont.classList.add("hidden");
     optionCont.innerHTML = signupBtn;
     $("#sign-msg").textContent = "Sign in to your account.";
     $("#submit").textContent = "Sign in";

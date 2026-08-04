@@ -53,10 +53,6 @@ input:focus{
     outline:none;
 }
 
-.hidden{
-    display:none;
-}
-
 #header{
     width:100%;
     position: absolute;
@@ -135,16 +131,22 @@ input:focus{
 }
 
 #search-container{
-    border:1px dashed var(--black);
-    background-color: var(--l-grey);;
     border-radius:0.5rem;
 }
 
+.hidden{
+    visibility: hidden;
+}
+
 .search-container{
+    border:1px dashed var(--black);
+    background-color: var(--l-grey);;
     width:100%;
     height:2.3rem;
 }
 .search-container-float{
+    border:1px dashed var(--black);
+    background-color: var(--l-grey);;
     max-width:35rem;
     min-height:2.8rem;
     position: absolute;
@@ -374,4 +376,42 @@ input:focus{
 }
 .profile-menu-item:hover{
     background-color: rgb(235,235,240);
+}
+
+.search-res-container{
+    display:none;
+}
+
+.search-res-container-float{
+    display: grid;
+    width:100%;
+    height:100%;
+    align-content: start;
+    justify-content: center;
+}
+
+#search-result{
+    display:grid;
+    margin-top:1rem;
+    border-radius:1rem;
+    padding:1rem;
+    grid-template-columns: 3rem 1fr;
+    grid-template-rows: 1fr 1fr;
+    column-gap: 1rem;
+}
+#search-result:hover{
+    background-color:rgb(235,235,240);
+}
+#search-name{
+    font-size:14pt;
+}
+#search-username{
+    color:grey;
+}
+#search-icon{
+    width:3rem;
+    height:3rem;
+    border-radius:2rem;
+    background-color:var(--blue);
+    grid-row:1/3;
 }
