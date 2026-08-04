@@ -22,6 +22,7 @@ async function updateUI(path){
         const data = await res.json();
         if(data.loggedIn){
             inboxgenerate();
+            $("#profile-title").textContent = data.user.fullname;
         }
         else {
             signin_form();
@@ -117,14 +118,15 @@ container.addEventListener("click", async (e)=> {
                 username:username,
                 password:password
             });
+            const data = await response.json();
             if(response.status >= 400){
-                const data = await response.json();
                 $("#sign-msg").textContent = data.error;
                 $("#sign-msg").classList.add("error");
             }
             else if(response.status == 201){
                 path == '/signup' && history.pushState({path: "/"}, "", "/");
                 inboxgenerate();
+                $("#profile-title").textContent = data.user.fullname;
             }
         }
     }

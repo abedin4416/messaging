@@ -1,0 +1,62 @@
+:root{
+    --blue: rgb(0,100,200);
+    --red: rgb(200, 0, 0);
+    --l-red: rgb(248, 153, 153);
+    --l-blue: rgb(153, 204, 255);
+    --teal: rgb(0,200,150);
+    --purple: rgb(100,0,200);
+    --l-purple: rgb(244, 200, 255);
+    --l-violet: rgb(220,180,255);
+    --l-teal: rgb(200,253,255);
+    --yellow: rgb(254, 218, 70);
+    --l-yellow: rgb(255,240,180);
+    --ash-2: rgb(240,245,250);
+    --ash-1: rgb(235, 240, 245);
+    --ash: rgb(230,235,240);
+    --black: rgb(30,30,40);
+}
+
+@font-face {
+    font-family: "gsanscode";
+    src: url("/res/gsanscode.ttf") format("truetype");
+    font-display: swap;
+}
+@font-face {
+    font-family: "gsansflex";
+    src: url("/res/gsansflex.ttf") format("truetype");
+    font-display: swap;
+}
+
+@keyframes scaleup {
+    from{
+        transform: scale(0.95);
+    }
+    to{
+        transform: scale(1.0);
+    }
+}
+
+html, body{
+    margin:0;
+    padding:0;
+    font-family: "gsansflex";
+    background-color: white;
+    height:100%;
+    box-sizing: border-box;
+}
+body{
+    display:grid;
+    grid-template-rows: 3rem 1fr;
+}
+
+button, input {
+    border:none;
+}
+
+input {
+    font-family: 'gsanscode';
+}
+
+button, input:focus{
+    outline:none;
+}
