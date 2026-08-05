@@ -98,7 +98,7 @@ app.post("/create", async (req, res) => {
 
 app.get("/session", async (req, res) => {
   try{
-    const session = await session_verify(req, "u.fullname, u.avatar_url");
+    const session = await session_verify(req, "u.full_name, u.avatar_url");
     if(session==0){
       return res.status(200).json({loggedIn: false});
     }
@@ -242,7 +242,7 @@ app.post("/pusher/auth", async (req, res) => {
   }
 });
 
-// GET /api/me - Returns current user profile based on session_token cookie
+
 app.get("/api/me", async (req, res) => {
   try {
     // Verify session using your custom session_verify helper
