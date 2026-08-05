@@ -264,7 +264,7 @@ app.post("/send", async (req, res)=> {
 
     const channelName = [session.username, receiver].sort().join("-");
 
-    await pusher.trigger(`private-chat-${channelName}`, "new-message", newMessage);
+    await pusher.trigger(`private-chat-${channelName}`, "new-message", newMessage, {socket_id: req.body.socket_id});
 
     return res.status(200).json({success:true, message: newMessage});
   } catch(err){

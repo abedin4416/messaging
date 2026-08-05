@@ -16,6 +16,23 @@ async function server(api, method = "GET", data = null) {
     }
 }
 
+const pusher = new Pusher("69cb07f696d28fd3387b", {
+    cluster: "ap2",
+    channelAuthorization: {
+        endpoint: "/pusher/auth",
+        transport: "ajax"
+    }
+});
+
+async function sendMsg(a, b){
+    const socketId = pusher.connection.socket_id;
+    await server("/send", "POST", {
+        receiver: a,
+        content: b,
+        socket_id: socketId
+    });
+}
+
 async function updateUI(path){
     if(path=="/"){
         const res = await server("/session");
@@ -31,13 +48,6 @@ async function updateUI(path){
             const {username: currentUser } = await res.json();
 
             const channelName = `private-chat-${[currentUser, chatPartner].sort().join("-")}`;
-            const pusher = new Pusher("69cb07f696d28fd3387b", {
-                cluster: "ap2",
-                channelAuthorization: {
-                    endpoint: "/pusher/auth",
-                    transport: "ajax"
-                }
-            });
 
             const channel = pusher.subscribe(channelName);
 
