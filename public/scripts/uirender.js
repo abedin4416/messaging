@@ -54,6 +54,10 @@ function inboxgenerate(){
     container.innerHTML = searchRes;
 }
 
+function inboxupdate(){
+    
+}
+
 function inputfocus(){
     $("#user-form")?.addEventListener("focusin", (e)=> {
         if(e.target.matches(".user-input")){

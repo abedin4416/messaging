@@ -51,8 +51,8 @@ async function updateUI(path){
             });
             const ch = channel(data.username);
             ch.bind("inbox-update", (msg)=>{
-
-            })
+                alert(msg.content);
+            });
         }
         else {
             pusher && pusher.disconnect();
