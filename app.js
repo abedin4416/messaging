@@ -6,6 +6,7 @@ import argon2 from "argon2";
 import cookieParser from "cookie-parser";
 import db from "./api/database.js";
 import { userexists } from "./api/verify.js";
+import Pusher from "pusher";
 
 const app = express();
 app.use(express.json());
@@ -21,6 +22,22 @@ function default_avatar(){
   let rand = Math.floor(Math.random()*4)+1;
   avatar += rand+".svg";
   return avatar;
+}
+
+async function session_verify(req, a){
+  try{
+    const sessionToken = req.cookies?.session_token;
+    if(!sessionToken) return 0;
+    const query = `
+      SELECT u.username, ${a} FROM sessions s
+      JOIN users u ON s.username = u.username
+      WHERE s.session_token = $1 AND s.expires_at > NOW();`;
+    const result = await db.query(query, [sessionToken]);
+    if(!result.rows || result.rows.length === 0) return 0;
+    return result.rows[0];
+  }catch(err){
+    throw err;
+  }
 }
 
 app.post("/create", async (req, res) => {
@@ -81,24 +98,10 @@ app.post("/create", async (req, res) => {
 
 app.get("/session", async (req, res) => {
   try{
-    const sessionToken = req.cookies?.session_token;
-    if(!sessionToken){
+    const session = await session_verify(req, "u.fullname, u.avatar_url");
+    if(session==0){
       return res.status(200).json({loggedIn: false});
     }
-
-    const query = `
-      SELECT u.username, u.full_name, u.avatar_url
-      FROM sessions s
-      JOIN users u ON s.username = u.username
-      WHERE s.session_token = $1 AND s.expires_at > NOW();
-      `;
-    const result = await db.query(query, [sessionToken]);
-
-    if(!result.rows || result.rows.length === 0) {
-      return res.status(200).json({loggedIn: false});
-    }
-
-    const session = result.rows[0];
 
     return res.status(200).json({
       loggedIn: true,
@@ -199,6 +202,93 @@ app.post("/search", async (req, res)=> {
     });
   } catch (err){
     return res.status(500).json({msg: "Failed to search user."});
+  }
+});
+
+const pusher = new Pusher({
+  appId: process.env.PUSHER_APP_ID,
+  key: process.env.PUSHER_KEY,
+  secret: process.env.PUSHER_SECRET,
+  cluster: process.env.PUSHER_CLUSTER,
+  useTLS: true,
+});
+
+app.post("/pusher/auth", async (req, res) => {
+  try {
+    // 1. Verify session using your session_verify function
+    const session = await session_verify(req, "u.username");
+
+    if (session === 0) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    // 2. Extract socket_id and channel_name sent automatically by Pusher JS SDK
+    const socketId = req.body.socket_id;
+    const channelName = req.body.channel_name; // e.g. "private-chat-userA-userB"
+    const currentUsername = session.username;
+
+    // 3. Security Check: Only allow access if the channel contains their username
+    if (channelName.includes(currentUsername)) {
+      // Generate the official auth signature required by Pusher
+      const authResponse = pusher.authorizeChannel(socketId, channelName);
+      return res.send(authResponse);
+    } else {
+      // Block unauthorized access/eavesdropping
+      return res.status(403).json({ error: "Forbidden: Not authorized for this chat" });
+    }
+  } catch (err) {
+    console.error("Pusher Auth Error:", err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// GET /api/me - Returns current user profile based on session_token cookie
+app.get("/api/me", async (req, res) => {
+  try {
+    // Verify session using your custom session_verify helper
+    const session = await session_verify(req, "u.username");
+
+    // If missing or expired session
+    if (session === 0) {
+      return res.status(401).json({ error: "Unauthorized: Not logged in" });
+    }
+
+    // Return the verified user details
+    return res.status(200).json({
+      username: session.username,
+    });
+  } catch (err) {
+    console.error("GET /api/me Error:", err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post("/send", async (req, res)=> {
+  try{
+    const session = await session_verify(req, "u.username");
+    const {receiver, content } = req.body;
+
+    if(session==0) return error(res, 401, "Session invalid");
+
+    if(!receiver || !content){
+      return error(res, 400, "Missing required fields");
+    }
+
+    const insertQuery = `
+      INSERT INTO messages (sender_username, receiver_username, content)
+      VALUES ($1, $2, $3)
+      RETURNING id, sender_username, receiver_username, content, created_at;
+      `;
+    const result = await db.query(insertQuery, [session.username, receiver, content]);
+    const newMessage = result.rows[0];
+
+    const channelName = [session.username, receiver].sort().join("-");
+
+    await pusher.trigger(`chat-$(channelName)`, "new-message", newMessage);
+
+    return res.status(200).json({success:true, message: newMessage});
+  } catch(err){
+    return res.status(500).json({error: "Failed to send message"});
   }
 });
 
