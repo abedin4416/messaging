@@ -25,9 +25,24 @@ async function updateUI(path){
             $("#profile-title").textContent = data.user.fullname;
             $("#profile-btn").style.background="url("+data.user.profilepic+")";
             $("#profile-btn").style.backgroundSize = "100%";
-            const resp = await server("/send", "POST", {
-                receiver: "trump",
-                content: "Hello world!"
+
+            const chatPartner = prompt("username");
+            const res = await fetch("/api/me", {credentials: "include"});
+            const {username: currentUser } = await res.json();
+
+            const channelName = `private-chat-${[currentUser, chatPartner].sort().join("-")}`;
+            const pusher = new Pusher("69cb07f696d28fd3387b", {
+                cluster: "ap2",
+                channelAuthorization: {
+                    endpoint: "/pusher/auth",
+                    transport: "ajax"
+                }
+            });
+
+            const channel = pusher.subscibe(channelName);
+
+            channel.bind("new-message", (data)=>{
+                alert(data.content);
             });
         }
         else {
