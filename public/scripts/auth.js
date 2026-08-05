@@ -39,7 +39,7 @@ async function updateUI(path){
                 }
             });
 
-            const channel = pusher.subscibe(channelName);
+            const channel = pusher.subscribe(channelName);
 
             channel.bind("new-message", (data)=>{
                 alert(data.content);
