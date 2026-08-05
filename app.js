@@ -256,7 +256,7 @@ app.post("/send", async (req, res)=> {
     if(session==0 || !session) return error(res, 401, "Session invalid");
     if(!receiver || !content) return error(res, 400, "Missing required fields");
 
-    const newMessage = db.insert("messages", {
+    const newMessage = await db.insert("messages", {
       sender_username: session.username,
       receiver_username: receiver,
       content: content
