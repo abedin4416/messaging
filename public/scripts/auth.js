@@ -52,7 +52,7 @@ async function updateUI(path){
 
             const ch = await channel(data.username);
             ch.bind("inbox-update", (msg)=>{
-                alert(msg.content+" sent you a message.");
+                alert(msg.sender_username+" sent you a message.");
             });
         }
         else {
