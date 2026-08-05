@@ -26,11 +26,6 @@ async function updateUI(path){
             $("#profile-btn").style.background="url("+data.user.profilepic+")";
             $("#profile-btn").style.backgroundSize = "100%";
 
-            await server("/send", "POST", {
-                receiver:"trump",
-                content: "Hello, fuck"
-            });
-
             const chatPartner = prompt("username");
             const res = await fetch("/api/me", {credentials: "include"});
             const {username: currentUser } = await res.json();
