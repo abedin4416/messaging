@@ -44,6 +44,11 @@ async function updateUI(path){
             channel.bind("new-message", (data)=>{
                 alert(data.content);
             });
+
+            await server("/send", "POST", {
+                receiver:"trump",
+                content: "Hello, fuck"
+            });
         }
         else {
             signin_form();
