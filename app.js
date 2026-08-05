@@ -69,8 +69,10 @@ app.post("/create", async (req, res) => {
     const sessionToken = crypto.randomBytes(32).toString("hex");
     const expiresAt = new Date(Date.now()+1*24*60*60*1000);
 
+    await db.query("BEGIN;");
     await db.insert("users", {username:username, full_name: fullname, password_hash: hashedPassword, avatar_url: avatar});
     await db.insert("sessions", {username: username, session_token: sessionToken, expires_at: expiresAt});
+    await db.query("COMMIT;");
     
     res.cookie("session_token", sessionToken, {
       httpOnly: true,
@@ -87,6 +89,7 @@ app.post("/create", async (req, res) => {
     });
 
   } catch (err) {
+    await db.query("ROLLBACK;");
     if (err.code === '23505') {
       return error(res, 409, 'Username is not available');
     }
