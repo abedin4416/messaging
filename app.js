@@ -250,11 +250,10 @@ app.post("/send", async (req, res)=> {
     const channelName = [session.username, receiver].sort().join("-");
 
     await pusher.trigger(`private-chat-${channelName}`, "new-message", newMessage, {socket_id: req.body.socket_id});
-    await pusher.trigger(`private-user-${receiver}`, "inbox-update", newMessage);
+    await pusher.trigger(`private-inbox-${receiver}`, "inbox-update", newMessage);
 
     return res.status(200).json({success:true, message: newMessage});
   } catch(err){
-    console.error("Fuck");
     return res.status(500).json({error: "Failed to send message"});
   }
 });
