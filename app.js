@@ -24,12 +24,14 @@ function default_avatar(){
   return avatar;
 }
 
-async function session_verify(req, a){
+async function session_verify(req, a=""){
   try{
     const sessionToken = req.cookies?.session_token;
     if(!sessionToken) return 0;
+    const extraColumns = a.trim() ? `, ${a.trim()}` : "";
     const query = `
-      SELECT u.username, ${a} FROM sessions s
+      SELECT u.username${extraColumns}
+      FROM sessions s
       JOIN users u ON s.username = u.username
       WHERE s.session_token = $1 AND s.expires_at > NOW();`;
     const result = await db.query(query, [sessionToken]);
@@ -53,25 +55,14 @@ app.post("/create", async (req, res) => {
       return error(res, 409, 'Username is not available.');
     }
 
-    await db.query("BEGIN;");
-
     const hashedPassword = await argon2.hash(password);
     const avatar = default_avatar();
-    const insertQuery = `
-      INSERT INTO users (full_name, username, password_hash, avatar_url)
-      VALUES ($1, $2, $3, $4);`;
-    
-    await db.query(insertQuery, [fullname, username, hashedPassword, avatar]);
-    
     const sessionToken = crypto.randomBytes(32).toString("hex");
     const expiresAt = new Date(Date.now()+1*24*60*60*1000);
 
-    await db.query(
-      `INSERT INTO sessions (username, session_token, expires_at)
-       VALUES ($1, $2, $3::timestamptz);`,
-      [username, sessionToken, expiresAt]
-    );
-
+    await db.query("BEGIN;");
+    await db.insert("users", {full_name: fullname, password_hash: hashedPassword, avatar_url: avatar});
+    await db.insert("sessions", {username: username, session_token: sessionToken, expires_at: expiresAt});
     await db.query("COMMIT;");
     
     res.cookie("session_token", sessionToken, {
@@ -215,12 +206,9 @@ const pusher = new Pusher({
 
 app.post("/pusher/auth", async (req, res) => {
   try {
-    // 1. Verify session using your session_verify function
-    const session = await session_verify(req, "u.username");
+    const session = await session_verify(req);
 
-    if (session === 0) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+    if (session === 0) return error(res, 401, "Unauthorized");
 
     // 2. Extract socket_id and channel_name sent automatically by Pusher JS SDK
     const socketId = req.body.socket_id;
@@ -245,18 +233,11 @@ app.post("/pusher/auth", async (req, res) => {
 
 app.get("/api/me", async (req, res) => {
   try {
-    // Verify session using your custom session_verify helper
-    const session = await session_verify(req, "u.username");
+    const session = await session_verify(req);
 
-    // If missing or expired session
-    if (session === 0) {
-      return res.status(401).json({ error: "Unauthorized: Not logged in" });
-    }
+    if (session === 0) return error(res, 401, "Unauthorized: Not logged in");
 
-    // Return the verified user details
-    return res.status(200).json({
-      username: session.username,
-    });
+    return res.status(200).json({username: session.username});
   } catch (err) {
     console.error("GET /api/me Error:", err);
     return res.status(500).json({ error: "Internal server error" });
@@ -265,29 +246,25 @@ app.get("/api/me", async (req, res) => {
 
 app.post("/send", async (req, res)=> {
   try{
-    const session = await session_verify(req, "u.username");
+    const session = await session_verify(req);
     const {receiver, content } = req.body;
 
-    if(session==0) return error(res, 401, "Session invalid");
+    if(session==0 || !session) return error(res, 401, "Session invalid");
+    if(!receiver || !content) return error(res, 400, "Missing required fields");
 
-    if(!receiver || !content){
-      return error(res, 400, "Missing required fields");
-    }
-
-    const insertQuery = `
-      INSERT INTO messages (sender_username, receiver_username, content)
-      VALUES ($1, $2, $3)
-      RETURNING id, sender_username, receiver_username, content, created_at;
-      `;
-    const result = await db.query(insertQuery, [session.username, receiver, content]);
-    const newMessage = result.rows[0];
+    const newMessage = db.insert("messages", {
+      sender_username: session.username,
+      receiver_username: receiver,
+      content: content
+    });
 
     const channelName = [session.username, receiver].sort().join("-");
 
-    await pusher.trigger(`chat-$(channelName)`, "new-message", newMessage);
+    await pusher.trigger(`private-chat-${channelName}`, "new-message", newMessage);
 
     return res.status(200).json({success:true, message: newMessage});
   } catch(err){
+    console.error("Fuck");
     return res.status(500).json({error: "Failed to send message"});
   }
 });

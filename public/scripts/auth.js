@@ -25,49 +25,10 @@ async function updateUI(path){
             $("#profile-title").textContent = data.user.fullname;
             $("#profile-btn").style.background="url("+data.user.profilepic+")";
             $("#profile-btn").style.backgroundSize = "100%";
-            const chatPartner = prompt("Enter the username of the person you are chatting with:");
-
-async function receiveMessages() {
-  if (!chatPartner) {
-    alert("Chat partner username is required.");
-    return;
-  }
-
-  // 1. Fetch current logged-in user from backend (verified via HttpOnly session cookie)
-  const res = await fetch("/api/me", { credentials: "include" });
-  if (!res.ok) {
-    alert("Please log in first!");
-    return;
-  }
-  const { username: currentUser } = await res.json();
-
-  // 2. Format channel name identically to your Express server: private-chat-userA-userB
-  const channelName = `chat-${[currentUser, chatPartner].sort().join("-")}`;
-
-  // 3. Initialize Pusher (Global object provided by CDN script tag)
-  const pusher = new Pusher("69cb07f696d28fd3387b", {
-    cluster: "ap2",
-    channelAuthorization: {
-      endpoint: "/pusher/auth", // Express handles authorization check here
-      transport: "ajax",
-    },
-  });
-
-  // 4. Subscribe to private channel
-  const channel = pusher.subscribe(channelName);
-
-  // 5. Listen for the 'new-message' event
-  channel.bind("new-message", (data) => {
-    // Only show alert if the message was sent by the other user
-    if (data.sender_username !== currentUser) {
-      alert(`📩 New Message from ${data.sender_username}:\n\n"${data.message}"`);
-    }
-  });
-
-  console.log(`Listening for incoming messages on: ${channelName}`);
-}
-
-receiveMessages();
+            const resp = await server("/send", "POST", {
+                receiver: "trump",
+                content: "Hello world!"
+            });
         }
         else {
             signin_form();
