@@ -39,20 +39,17 @@ async function updateUI(path){
         const data = await res.json();
         if(data.loggedIn){
             inboxgenerate();
-            $("#profile-title").textContent = data.user.fullname;
-            $("#profile-btn").style.background="url("+data.user.profilepic+")";
+            $("#profile-title").textContent = data.fullname;
+            $("#profile-btn").style.background="url("+data.profilepic+")";
             $("#profile-btn").style.backgroundSize = "100%";
 
             const chatPartner = prompt("username");
-            const res = await fetch("/api/me", {credentials: "include"});
-            const {username: currentUser } = await res.json();
-
-            const channelName = `private-chat-${[currentUser, chatPartner].sort().join("-")}`;
+            const channelName = `private-chat-${[data.username, chatPartner].sort().join("-")}`;
 
             const channel = pusher.subscribe(channelName);
 
-            channel.bind("new-message", (data)=>{
-                alert(data.content);
+            channel.bind("new-message", (msg)=>{
+                alert(msg.content);
             });
         }
         else {
@@ -159,8 +156,8 @@ container.addEventListener("click", async (e)=> {
             else if(response.status == 201){
                 path == '/signup' && history.pushState({path: "/"}, "", "/");
                 inboxgenerate();
-                $("#profile-title").textContent = data.user.fullname;
-                $("#profile-btn").style.background="url("+data.user.profilepic+")";
+                $("#profile-title").textContent = data.fullname;
+                $("#profile-btn").style.background="url("+data.profilepic+")";
                 $("#profile-btn").style.backgroundSize = "100%";
             }
         }

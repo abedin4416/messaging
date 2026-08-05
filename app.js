@@ -14,6 +14,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(import.meta.dirname, "public")));
 
+const pusher = new Pusher({
+  appId: process.env.PUSHER_APP_ID,
+  key: process.env.PUSHER_KEY,
+  secret: process.env.PUSHER_SECRET,
+  cluster: process.env.PUSHER_CLUSTER,
+  useTLS: true,
+});
+
 function error(res, status, err) {
   return res.status(status).json({error:err});
 }
@@ -73,11 +81,12 @@ app.post("/create", async (req, res) => {
       expires: expiresAt,
     });
     
-    return res.status(201).json({loggedIn: true, user:{ 
+    return res.status(201).json({
+      loggedIn: true,
       fullname:fullname,
       username:username,
       profilepic:avatar
-    }});
+    });
 
   } catch (err) {
     await db.query("ROLLBACK;");
@@ -91,17 +100,15 @@ app.post("/create", async (req, res) => {
 app.get("/session", async (req, res) => {
   try{
     const session = await session_verify(req, "u.full_name, u.avatar_url");
-    if(session==0){
-      return res.status(200).json({loggedIn: false});
+    if(session==0 || !session){
+      return res.status(201).json({loggedIn: false});
     }
 
     return res.status(200).json({
       loggedIn: true,
-      user: {
-        username: session.username,
-        fullname: session.full_name,
-        profilepic: session.avatar_url
-      },
+      username: session.username,
+      fullname: session.full_name,
+      profilepic: session.avatar_url
     });
   } catch (err) {
     console.error("Auth check error: ", err);
@@ -148,10 +155,12 @@ app.post("/signin", async (req, res) => {
     const sessionToken = crypto.randomBytes(32).toString("hex");
     const expiresAt = new Date(Date.now() + 1 * 24 * 60 * 60 * 1000);
 
-    await db.query(
-      `INSERT INTO sessions (username, session_token, expires_at) VALUES ($1, $2, $3);`,
-      [user.username, sessionToken, expiresAt]
-    );
+    await db.insert("sessions", {
+      username: user.username,
+      session_token: sessionToken,
+      expires_at: expiresAt
+    });
+
     res.cookie("session_token", sessionToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -159,11 +168,12 @@ app.post("/signin", async (req, res) => {
       expires: expiresAt,
     });
     
-    return res.status(201).json({loggedIn: true, user:{
+    return res.status(201).json({
+      loggedIn: true,
       fullname: user.full_name,
       username: user.username,
       profilepic: user.avatar_url
-    }});
+    });
 
   } catch (err) {
     return error(res, 500, "Sign in error. Please try again.");
@@ -197,28 +207,17 @@ app.post("/search", async (req, res)=> {
   }
 });
 
-const pusher = new Pusher({
-  appId: process.env.PUSHER_APP_ID,
-  key: process.env.PUSHER_KEY,
-  secret: process.env.PUSHER_SECRET,
-  cluster: process.env.PUSHER_CLUSTER,
-  useTLS: true,
-});
-
 app.post("/pusher/auth", async (req, res) => {
   try {
     const session = await session_verify(req);
 
     if (session === 0 || !session) return error(res, 401, "Unauthorized");
 
-    // Check req.body FIRST, then fallback to req.query
-    const socketId = req.body?.socket_id || req.query?.socket_id;
-    const channelName = req.body?.channel_name || req.query?.channel_name;
-    const currentUsername = session?.username;
+    const socketId = req.body?.socket_id;
+    const channelName = req.body?.channel_name;
+    const currentUsername = session.username;
 
-    // Guard clause: stop execution if parameters are missing
     if (!socketId || !channelName) {
-      console.log("Debug Auth Inputs -> body:", req.body, "query:", req.query);
       return res.status(400).json({ error: "Missing socket_id or channel_name" });
     }
 
@@ -230,20 +229,6 @@ app.post("/pusher/auth", async (req, res) => {
     }
   } catch (err) {
     console.error("Pusher Auth Error:", err);
-    return res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-
-app.get("/api/me", async (req, res) => {
-  try {
-    const session = await session_verify(req);
-
-    if (session === 0) return error(res, 401, "Unauthorized: Not logged in");
-
-    return res.status(200).json({username: session.username});
-  } catch (err) {
-    console.error("GET /api/me Error:", err);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
