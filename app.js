@@ -10,6 +10,7 @@ import Pusher from "pusher";
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(import.meta.dirname, "public")));
 
@@ -208,20 +209,23 @@ app.post("/pusher/auth", async (req, res) => {
   try {
     const session = await session_verify(req);
 
-    if (session === 0) return error(res, 401, "Unauthorized");
+    if (session === 0 || !session) return error(res, 401, "Unauthorized");
 
-    // 2. Extract socket_id and channel_name sent automatically by Pusher JS SDK
-    const socketId = req.body.socket_id;
-    const channelName = req.body.channel_name; // e.g. "private-chat-userA-userB"
-    const currentUsername = session.username;
+    // Check req.body FIRST, then fallback to req.query
+    const socketId = req.body?.socket_id || req.query?.socket_id;
+    const channelName = req.body?.channel_name || req.query?.channel_name;
+    const currentUsername = session?.username;
 
-    // 3. Security Check: Only allow access if the channel contains their username
+    // Guard clause: stop execution if parameters are missing
+    if (!socketId || !channelName) {
+      console.log("Debug Auth Inputs -> body:", req.body, "query:", req.query);
+      return res.status(400).json({ error: "Missing socket_id or channel_name" });
+    }
+
     if (channelName.includes(currentUsername)) {
-      // Generate the official auth signature required by Pusher
       const authResponse = pusher.authorizeChannel(socketId, channelName);
       return res.send(authResponse);
     } else {
-      // Block unauthorized access/eavesdropping
       return res.status(403).json({ error: "Forbidden: Not authorized for this chat" });
     }
   } catch (err) {
