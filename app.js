@@ -69,7 +69,7 @@ app.post("/create", async (req, res) => {
     const sessionToken = crypto.randomBytes(32).toString("hex");
     const expiresAt = new Date(Date.now()+1*24*60*60*1000);
 
-    await db.insert("users", {full_name: fullname, password_hash: hashedPassword, avatar_url: avatar});
+    await db.insert("users", {username:username, full_name: fullname, password_hash: hashedPassword, avatar_url: avatar});
     await db.insert("sessions", {username: username, session_token: sessionToken, expires_at: expiresAt});
     
     res.cookie("session_token", sessionToken, {
