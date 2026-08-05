@@ -24,13 +24,20 @@ const pusher = new Pusher("69cb07f696d28fd3387b", {
     }
 });
 
-async function sendMsg(a, b){
+async function sendMsg(receiver, message){
     const socketId = pusher.connection.socket_id;
     await server("/send", "POST", {
-        receiver: a,
-        content: b,
+        receiver: receiver,
+        content: message,
         socket_id: socketId
     });
+}
+
+async function channel(userA, userB=""){
+    const type = userB? "chat-":"inbox";
+    const channelName = `private-${type}${[userA, userB].sort().join("-")}`;
+    const channel = pusher.subscribe(channelName);
+    return channel;
 }
 
 async function updateUI(path){
@@ -43,13 +50,9 @@ async function updateUI(path){
             $("#profile-btn").style.background="url("+data.profilepic+")";
             $("#profile-btn").style.backgroundSize = "100%";
 
-            const chatPartner = prompt("username");
-            const channelName = `private-chat-${[data.username, chatPartner].sort().join("-")}`;
-
-            const channel = pusher.subscribe(channelName);
-
-            channel.bind("new-message", (msg)=>{
-                alert(msg.content);
+            const ch = await channel(data.username);
+            ch.bind("inbox-update", (msg)=>{
+                alert(msg.sender_username+" sent you a message.");
             });
         }
         else {
