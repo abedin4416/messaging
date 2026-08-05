@@ -16,14 +16,7 @@ async function server(api, method = "GET", data = null) {
     }
 }
 
-const pusher = new Pusher("69cb07f696d28fd3387b", {
-    cluster: "ap2",
-    channelAuthorization: {
-        endpoint: "/pusher/auth",
-        transport: "ajax"
-    }
-});
-
+let pusher = null;
 async function sendMsg(receiver, message){
     const socketId = pusher.connection.socket_id;
     await server("/send", "POST", {
@@ -33,7 +26,7 @@ async function sendMsg(receiver, message){
     });
 }
 
-async function channel(userA, userB=""){
+function channel(userA, userB=""){
     const type = userB? "chat-":"inbox";
     const channelName = `private-${type}${[userA, userB].sort().join("-")}`;
     const channel = pusher.subscribe(channelName);
@@ -44,22 +37,32 @@ async function updateUI(path){
     if(path=="/"){
         const res = await server("/session");
         const data = await res.json();
-        if(data.loggedIn){
+        if(res.status == 200){
             inboxgenerate();
             $("#profile-title").textContent = data.fullname;
             $("#profile-btn").style.background="url("+data.profilepic+")";
             $("#profile-btn").style.backgroundSize = "100%";
-
-            const ch = await channel(data.username);
-            ch.bind("inbox-update", (msg)=>{
-                alert(msg.sender_username+" sent you a message.");
+            pusher = new Pusher("69cb07f696d28fd3387b", {
+                cluster: "ap2",
+                channelAuthorization: {
+                endpoint: "/pusher/auth",
+                transport: "ajax"
+                }
             });
+            const ch = channel(data.username);
+            ch.bind("inbox-update", (msg)=>{
+
+            })
         }
         else {
+            pusher && pusher.disconnect();
+            pusher = null;
             signin_form();
         }
     }
     else if(path=="/signup"){
+        pusher && pusher.disconnect();
+        pusher = null;
         signup_form();
     }
 }
@@ -98,7 +101,11 @@ optionCont.addEventListener("click", async (e)=>{
             credentials: "include"
         });
         const data = await response.json();
-        if(data.success) signin_form();
+        if(data.success){
+            pusher && pusher.disconnect();
+            pusher = null;
+            signin_form();
+        }
     }
 });
 
