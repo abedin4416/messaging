@@ -33,27 +33,29 @@ function channel(userA, userB=""){
     return channel;
 }
 
+function loadInbox(data){
+    inboxgenerate();
+    $("#profile-title").textContent = data.fullname;
+    $("#profile-btn").style.background="url("+data.profilepic+")";
+    $("#profile-btn").style.backgroundSize = "100%";
+    pusher = new Pusher("69cb07f696d28fd3387b", {
+        cluster: "ap2",
+        channelAuthorization: {
+        endpoint: "/pusher/auth",
+        transport: "ajax"
+        }
+    });
+    const ch = channel(data.username);
+    ch.bind("inbox-update", (msg)=>{
+        alert(msg.content);
+    });
+}
+
 async function updateUI(path){
     if(path=="/"){
         const res = await server("/session");
         const data = await res.json();
-        if(res.status == 200){
-            inboxgenerate();
-            $("#profile-title").textContent = data.fullname;
-            $("#profile-btn").style.background="url("+data.profilepic+")";
-            $("#profile-btn").style.backgroundSize = "100%";
-            pusher = new Pusher("69cb07f696d28fd3387b", {
-                cluster: "ap2",
-                channelAuthorization: {
-                endpoint: "/pusher/auth",
-                transport: "ajax"
-                }
-            });
-            const ch = channel(data.username);
-            ch.bind("inbox-update", (msg)=>{
-                alert(msg.content);
-            });
-        }
+        if(res.status == 200) loadInbox(data);
         else {
             pusher && pusher.disconnect();
             pusher = null;
@@ -96,10 +98,7 @@ optionCont.addEventListener("click", async (e)=>{
         stylechange($("#profile-menu"));
     }
     else if(e.target.closest("#signout-btn")){
-        const response = await fetch("/signout",{
-            method: "POST",
-            credentials: "include"
-        });
+        const response = await server("/signout", "POST", {});
         const data = await response.json();
         if(data.success){
             pusher && pusher.disconnect();
@@ -165,10 +164,7 @@ container.addEventListener("click", async (e)=> {
             }
             else if(response.status == 201){
                 path == '/signup' && history.pushState({path: "/"}, "", "/");
-                inboxgenerate();
-                $("#profile-title").textContent = data.fullname;
-                $("#profile-btn").style.background="url("+data.profilepic+")";
-                $("#profile-btn").style.backgroundSize = "100%";
+                loadInbox(data);
             }
         }
     }
