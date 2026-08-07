@@ -24,7 +24,7 @@ const profileMenu = "<div id='profile-menu' class='profile-menu'>"+profileTitle+
 const searchRes = "<div id='search-res-container'class='search-res-container'><div id='search-result'><div id='search-icon'></div><div id='search-name'></div><div id='search-username'></div><div id='add-known'></div></div></div>";
 const inboxCont = "<div id='inbox-container' class='inbox-container'></div>";
 const chatCont = "<div id='chat-container' class='chat-container inbox-opened'></div>";
-const inboxWrapper = "<div id='inbox-wrapper'>"+inboxCont+chatCont+"</div>";c
+const inboxWrapper = "<div id='inbox-wrapper'>"+inboxCont+chatCont+"</div>";
 
 function $(a){return document.querySelector(a);}
 function createEl(a){return document.createElement(a);}
