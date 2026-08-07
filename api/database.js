@@ -53,11 +53,18 @@ async function getrow(table, where, find="*"){
   return result.rows[0] || null;
 }
 
+async function count(table, where){
+  const client = await getPool();
+  const result = await client.query(`COUNT (*) FROM ${table} WHERE ${where}`);
+  return result.rows[0] || null;
+}
+
 export default {
     query: async (text, params) => {
         const client = await getPool();
         return client.query(text, params);
     },
     insert,
-    getrow
+    getrow,
+    count
 };

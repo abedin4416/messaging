@@ -219,10 +219,9 @@ app.post("/send", async (req, res)=> {
     const channel = [session.username, receiver].sort().join("-");
 
     const receiverInfo = await db.getrow("users", `username='${receiver}'`, "fullname, avatar");
-    const receiverUnseen = await db.getrow(
+    const receiverUnseen = await db.count(
       "messages", 
       `sender='${session.username}' AND receiver='${receiver}' AND seen=0`,
-      ""
     );
 
     const newMessage = await db.insert("messages", {
@@ -240,7 +239,7 @@ app.post("/send", async (req, res)=> {
       receiverfullname: receiverInfo.fullname,
       receiverprofile: receiverInfo.avatar,
       content: content,
-      unseen: receiverUnseen.rows.length
+      unseen: receiverUnseen.count
     });
 
     return res.status(200).json({success:true, message: newMessage});
