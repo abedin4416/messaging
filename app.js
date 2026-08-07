@@ -239,7 +239,8 @@ app.post("/send", async (req, res)=> {
       receiverfullname: receiverInfo.fullname,
       receiverprofile: receiverInfo.avatar,
       content: content,
-      unseen: receiverUnseen.count
+      unseen: receiverUnseen.count,
+      created_at: newMessage.created_at
     });
 
     return res.status(200).json({success:true, message: newMessage});
