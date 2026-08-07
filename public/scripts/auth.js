@@ -46,7 +46,7 @@ function loadInbox(data){
         }
     });
     const ch = channel(data.username);
-    ch.bind("inbox-update", (msg)=>{
+    ch.bind("new-message", (msg)=>{
         inboxupdate(msg);
     });
 }

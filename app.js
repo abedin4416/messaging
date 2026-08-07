@@ -216,8 +216,6 @@ app.post("/send", async (req, res)=> {
     if(!session) return error(res, 401, "Session invalid");
     if(!receiver || !content) return error(res, 400, "Missing required fields");
 
-    const channel = [session.username, receiver].sort().join("-");
-
     const receiverInfo = await db.getrow("users", `username='${receiver}'`, "fullname, avatar");
 
     const newMessage = await db.insert("messages", {
@@ -231,8 +229,7 @@ app.post("/send", async (req, res)=> {
       `sender='${session.username}' AND receiver='${receiver}' AND seen=0`,
     );
 
-    await pusher.trigger(`private-chat-${channel}`, "new-message", newMessage, {socket_id: req.body.socket_id});
-    await pusher.trigger(`private-inbox-${receiver}`, "inbox-update", {
+    await pusher.trigger(`private-inbox-${receiver}`, "new-message", {
       sender: session.username,
       senderfullname: session.fullname,
       senderprofile:session.avatar,
