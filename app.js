@@ -210,11 +210,20 @@ app.post("/pusher/auth", async (req, res) => {
 
 app.post("/send", async (req, res)=> {
   try{
-    const session = await session_verify(req);
+    const session = await session_verify(req, "u.fullname, u.avatar");
     const {receiver, content } = req.body;
 
     if(!session) return error(res, 401, "Session invalid");
     if(!receiver || !content) return error(res, 400, "Missing required fields");
+
+    const channel = [session.username, receiver].sort().join("-");
+
+    const receiverInfo = await db.getrow("users", `username='${receiver}'`, "fullname, avatar");
+    const receiverUnseen = await db.getrow(
+      "messages", 
+      `sender='${session.username}' AND receiver='${receiver}' AND seen=0`,
+      ""
+    );
 
     const newMessage = await db.insert("messages", {
       sender: session.username,
@@ -222,10 +231,17 @@ app.post("/send", async (req, res)=> {
       content: content
     });
 
-    const channel = [session.username, receiver].sort().join("-");
-
     await pusher.trigger(`private-chat-${channel}`, "new-message", newMessage, {socket_id: req.body.socket_id});
-    await pusher.trigger(`private-inbox-${receiver}`, "inbox-update", newMessage);
+    await pusher.trigger(`private-inbox-${receiver}`, "inbox-update", {
+      sender: session.username,
+      senderfullname: session.fullname,
+      senderprofile:session.avatar,
+      receiver: receiver,
+      receiverfullname: receiverInfo.fullname,
+      receiverprofile: receiverInfo.avatar,
+      content: content,
+      unseen: receiverUnseen.rows.length
+    });
 
     return res.status(200).json({success:true, message: newMessage});
   } catch(err){

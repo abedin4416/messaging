@@ -24,7 +24,7 @@ const profileMenu = "<div id='profile-menu' class='profile-menu'>"+profileTitle+
 const searchRes = "<div id='search-res-container'class='search-res-container'><div id='search-result'><div id='search-icon'></div><div id='search-name'></div><div id='search-username'></div><div id='add-known'></div></div></div>";
 const inboxCont = "<div id='inbox-container' class='inbox-container'></div>";
 const chatCont = "<div id='chat-container' class='chat-container inbox-opened'></div>";
-const inboxWrapper = "<div id='inbox-wrapper'>"+inboxCont+chatCont+"</div>";
+const inboxWrapper = "<div id='inbox-wrapper'>"+inboxCont+chatCont+"</div>";c
 
 function $(a){return document.querySelector(a);}
 function createEl(a){return document.createElement(a);}
@@ -36,6 +36,8 @@ const title = $("#title");
 const container = $("#container");
 const optionCont = $("#option-container");
 const searchCont = $("#search-container");
+
+let inboxdata = [];
 
 function inputstate(e, ph, err = true){
     e.classList.toggle("emptyinput", err);
@@ -56,8 +58,23 @@ function inboxgenerate(){
     container.innerHTML = searchRes+inboxWrapper;
 }
 
-function inboxupdate(){
+function inboxupdate(data){
+    const icon = `<div id='inbox-icon'>${data.senderprofile}</div>`;
+    const fullname = `<div id='inbox-name'>${data.senderfullname}</div>`;
+    const lmsg = `<div id='last-msg'>${data.content}</div>`;
+    const time = `<div id='inbox-last-time'>${data.created_at}</div>`;
+    const unseen = `<div id='inbox-unseen'>${data.unseen}</div>`;
+    const item = `<div id='${data.sender}' class='inbox-item'>${icon}${fullname}${lmsg}${time}${unseen}</div>`;
+    const inboxHtml = $("#inbox-wrapper").innerHTML;
 
+    if(inboxdata.includes(data.sender)){
+        $("#"+data.sender) && ($("#"+data.sender).outerHTML = "");
+        $("#inbox-wrapper").innerHTML = item+inboxHtml;
+    }
+    else {
+        inboxdata.push(data.sender);
+        $("#inbox-wrapper").innerHTML = item+inboxHtml;
+    }
 }
 
 function inputfocus(){

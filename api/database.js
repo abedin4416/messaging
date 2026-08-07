@@ -49,6 +49,7 @@ async function insert(table, data){
 async function getrow(table, where, find="*"){
   const client = await getPool();
   const result = await client.query(`SELECT ${find} FROM ${table} WHERE ${where}`);
+  if(result.rows.length > 1) return result;
   return result.rows[0] || null;
 }
 
