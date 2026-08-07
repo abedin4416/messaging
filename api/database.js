@@ -56,7 +56,7 @@ async function getrow(table, where, find="*"){
 async function count(table, where){
   const client = await getPool();
   const result = await client.query(`SELECT COUNT(*) FROM ${table} WHERE ${where}`);
-  return result.rows[0] || null;
+  return result.rows[0].count || null;
 }
 
 export default {

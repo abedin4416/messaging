@@ -219,16 +219,17 @@ app.post("/send", async (req, res)=> {
     const channel = [session.username, receiver].sort().join("-");
 
     const receiverInfo = await db.getrow("users", `username='${receiver}'`, "fullname, avatar");
-    const receiverUnseen = await db.count(
-      "messages", 
-      `sender='${session.username}' AND receiver='${receiver}' AND seen=0`,
-    );
 
     const newMessage = await db.insert("messages", {
       sender: session.username,
       receiver: receiver,
       content: content
     });
+
+    const receiverUnseen = await db.count(
+      "messages", 
+      `sender='${session.username}' AND receiver='${receiver}' AND seen=0`,
+    );
 
     await pusher.trigger(`private-chat-${channel}`, "new-message", newMessage, {socket_id: req.body.socket_id});
     await pusher.trigger(`private-inbox-${receiver}`, "inbox-update", {
@@ -239,7 +240,7 @@ app.post("/send", async (req, res)=> {
       receiverfullname: receiverInfo.fullname,
       receiverprofile: receiverInfo.avatar,
       content: content,
-      unseen: receiverUnseen.count,
+      unseen: receiverUnseen,
       created_at: newMessage.created_at
     });
 
