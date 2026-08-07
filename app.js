@@ -5,7 +5,6 @@ import path from "path";
 import argon2 from "argon2";
 import cookieParser from "cookie-parser";
 import db from "./api/database.js";
-import { userexists } from "./api/verify.js";
 import Pusher from "pusher";
 
 const app = express();
@@ -44,7 +43,7 @@ async function session_verify(req, a=""){
       JOIN users u ON s.username = u.username
       WHERE s.session_token = $1 AND s.expires_at > NOW();`;
     const result = await db.query(query, [sessionToken]);
-    if(!result.rows || result.rows.length === 0) return 0;
+    if(result.rows.length === 0) return null;
     return result.rows[0];
   }catch(err){
     throw err;
@@ -59,20 +58,16 @@ app.post("/create", async (req, res) => {
   }
 
   try {
-    const existingUser = await userexists(username);
-    if (existingUser) {
-      return error(res, 409, 'Username is not available.');
-    }
+    const userexists = await db.getrow("users",`username='${username}'`, "username");
+    if (userexists) return error(res, 409, 'Username is not available.');
 
     const hashedPassword = await argon2.hash(password);
     const avatar = default_avatar();
     const sessionToken = crypto.randomBytes(32).toString("hex");
     const expiresAt = new Date(Date.now()+1*24*60*60*1000);
 
-    await db.query("BEGIN;");
-    await db.insert("users", {full_name: fullname, username:username, password_hash: hashedPassword, avatar_url: avatar});
+    await db.insert("users", {username:username, fullname: fullname, password_hash: hashedPassword, avatar: avatar});
     await db.insert("sessions", {username: username, session_token: sessionToken, expires_at: expiresAt});
-    await db.query("COMMIT;");
     
     res.cookie("session_token", sessionToken, {
       httpOnly: true,
@@ -89,7 +84,6 @@ app.post("/create", async (req, res) => {
     });
 
   } catch (err) {
-    await db.query("ROLLBACK;");
     if (err.code === '23505') {
       return error(res, 409, 'Username is not available');
     }
@@ -99,7 +93,7 @@ app.post("/create", async (req, res) => {
 
 app.get("/session", async (req, res) => {
   try{
-    const session = await session_verify(req, "u.full_name, u.avatar_url");
+    const session = await session_verify(req, "u.fullname, u.avatar");
     if(session==0 || !session){
       return res.status(201).json({loggedIn: false});
     }
@@ -107,8 +101,8 @@ app.get("/session", async (req, res) => {
     return res.status(200).json({
       loggedIn: true,
       username: session.username,
-      fullname: session.full_name,
-      profilepic: session.avatar_url
+      fullname: session.fullname,
+      profilepic: session.avatar
     });
   } catch (err) {
     console.error("Auth check error: ", err);
@@ -137,28 +131,17 @@ app.post("/signin", async (req, res) => {
   }
 
   try {
-    const userResult = await db.query(
-      "SELECT full_name, username, password_hash, avatar_url FROM users WHERE username = $1;",
-      [username]
-    );
-    if(userResult.rows.length === 0) {
-      return error(res, 401, "Invalid username or password.");
-    }
-
-    const user = userResult.rows[0];
+    const user = await db.getrow("users", `username='${username}'`);
+    if(!user) return error(res, 401, "Invalid username or password.");
 
     const isValidPassword = await argon2.verify(user.password_hash, password);
-    if(!isValidPassword) {
-      return error(res, 401, "Invalid username or password.");
-    }
+    if(!isValidPassword) return error(res, 401, "Invalid username or password.");
 
     const sessionToken = crypto.randomBytes(32).toString("hex");
     const expiresAt = new Date(Date.now() + 1 * 24 * 60 * 60 * 1000);
 
     await db.insert("sessions", {
-      username: user.username,
-      session_token: sessionToken,
-      expires_at: expiresAt
+      username: user.username, session_token: sessionToken, expires_at: expiresAt
     });
 
     res.cookie("session_token", sessionToken, {
@@ -170,9 +153,9 @@ app.post("/signin", async (req, res) => {
     
     return res.status(201).json({
       loggedIn: true,
-      fullname: user.full_name,
+      fullname: user.fullname,
       username: user.username,
-      profilepic: user.avatar_url
+      profilepic: user.avatar
     });
 
   } catch (err) {
@@ -186,21 +169,13 @@ app.post("/search", async (req, res)=> {
     return res.status(400);
   }
   try{
-    const searchQuery = `
-      SELECT full_name, username, avatar_url
-      FROM users
-      WHERE username = $1;`;
-
-    const result = await db.query(searchQuery, [username.trim()]);
-
-    if(result.rows.length === 0){
-      return res.status(404).json({error: "User not found."});
-    }
+    const result = await db.getrow("users", `username='${username}'`, "id, fullname, avatar");
+    if(!result) return error(res, 404, "User not found.");
 
     return res.json({
-      fullname: result.rows[0].full_name,
-      username: result.rows[0].username,
-      profilepic: result.rows[0].avatar_url
+      fullname: result.fullname,
+      username: result.username,
+      profilepic: result.avatar
     });
   } catch (err){
     return res.status(500).json({msg: "Failed to search user."});
@@ -238,18 +213,18 @@ app.post("/send", async (req, res)=> {
     const session = await session_verify(req);
     const {receiver, content } = req.body;
 
-    if(session==0 || !session) return error(res, 401, "Session invalid");
+    if(!session) return error(res, 401, "Session invalid");
     if(!receiver || !content) return error(res, 400, "Missing required fields");
 
     const newMessage = await db.insert("messages", {
-      sender_username: session.username,
-      receiver_username: receiver,
+      sender: session.username,
+      receiver: receiver,
       content: content
     });
 
-    const channelName = [session.username, receiver].sort().join("-");
+    const channel = [session.username, receiver].sort().join("-");
 
-    await pusher.trigger(`private-chat-${channelName}`, "new-message", newMessage, {socket_id: req.body.socket_id});
+    await pusher.trigger(`private-chat-${channel}`, "new-message", newMessage, {socket_id: req.body.socket_id});
     await pusher.trigger(`private-inbox-${receiver}`, "inbox-update", newMessage);
 
     return res.status(200).json({success:true, message: newMessage});

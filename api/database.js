@@ -20,7 +20,7 @@ async function getPool(){
     return pool;
 }
 
-async function insert(table, data) {
+async function insert(table, data){
   try {
     const keys = Object.keys(data);
     const values = Object.values(data);
@@ -46,6 +46,11 @@ async function insert(table, data) {
   }
 }
 
+async function getrow(table, where, find="*"){
+  const client = await getPool();
+  const result = await client.query(`SELECT ${find} FROM ${table} WHERE ${where}`);
+  return result.rows[0] || null;
+}
 
 export default {
     query: async (text, params) => {
@@ -53,4 +58,5 @@ export default {
         return client.query(text, params);
     },
     insert,
+    getrow
 };
