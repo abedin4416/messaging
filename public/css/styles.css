@@ -370,7 +370,6 @@
 }
 
 #inbox-container{
-    background-color: purple;
     height:100%;
 }
 
@@ -387,4 +386,39 @@
     .inbox-opened{
         display:none;
     }
+}
+
+.inbox-icon{
+    width:2.5rem;
+    height:2.5rem;
+    background-size:100%;
+    background-repeat:no-repeat;
+    background-position: center;
+    border-radius:2rem;
+    grid-area:left;
+}
+
+.inbox-item{
+    display:grid;
+    grid-template-columns: 3rem 1fr 1fr 1fr;
+    grid-template-areas: 
+        "left top top rt"
+        "left bottom bottom rb";
+    align-items: center;
+}
+
+.inbox-name{
+    grid-area:top;
+}
+
+.last-msg{
+    grid-area:bottom;
+}
+
+.inbox-last-time{
+    grid-area:rt;
+}
+
+.inbox-unseen{
+    grid-area:rb;
 }

@@ -59,21 +59,22 @@ function inboxgenerate(){
 }
 
 function inboxupdate(data){
-    const icon = `<div id='inbox-icon'>${data.senderprofile}</div>`;
-    const fullname = `<div id='inbox-name'>${data.senderfullname}</div>`;
-    const lmsg = `<div id='last-msg'>${data.content}</div>`;
-    const time = `<div id='inbox-last-time'>${data.created_at}</div>`;
-    const unseen = `<div id='inbox-unseen'>${data.unseen}</div>`;
+    const icon = `<div class='inbox-icon'style='background-image:url("${data.senderprofile}")'></div>`;
+    const fullname = `<div class='inbox-name'>${data.senderfullname}</div>`;
+    const lmsg = `<div class='last-msg'>${data.content}</div>`;
+    const time = `<div class='inbox-last-time'>${data.created_at}</div>`;
+    const unseen = `<div class='inbox-unseen'>${data.unseen}</div>`;
     const item = `<div id='${data.sender}' class='inbox-item'>${icon}${fullname}${lmsg}${time}${unseen}</div>`;
-    const inboxHtml = $("#inbox-wrapper").innerHTML;
 
     if(inboxdata.includes(data.sender)){
-        $("#"+data.sender) && ($("#"+data.sender).outerHTML = "");
-        $("#inbox-wrapper").innerHTML = item+inboxHtml;
+        $(`#${data.sender}`).outerHTML = "";
+        const inboxHtml = $("#inbox-container").innerHTML;
+        $("#inbox-container").innerHTML = item+inboxHtml;
     }
     else {
         inboxdata.push(data.sender);
-        $("#inbox-wrapper").innerHTML = item+inboxHtml;
+        const inboxHtml = $("#inbox-container").innerHTML;
+        $("#inbox-container").innerHTML = item+inboxHtml;
     }
 }
 
