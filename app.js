@@ -25,13 +25,6 @@ function error(res, status, err) {
   return res.status(status).json({error:err});
 }
 
-function default_avatar(){
-  let avatar = "https://ik.imagekit.io/9xzknibra/profile_avatar";
-  let rand = Math.floor(Math.random()*4)+1;
-  avatar += rand+".svg";
-  return avatar;
-}
-
 async function session_verify(req, a=""){
   try{
     const sessionToken = req.cookies?.session_token;
@@ -62,7 +55,7 @@ app.post("/create", async (req, res) => {
     if (userexists) return error(res, 409, 'Username is not available.');
 
     const hashedPassword = await argon2.hash(password);
-    const avatar = default_avatar();
+    const avatar = "/res/people.png";
     const sessionToken = crypto.randomBytes(32).toString("hex");
     const expiresAt = new Date(Date.now()+1*24*60*60*1000);
 

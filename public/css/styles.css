@@ -144,14 +144,10 @@
     border-radius:3rem;
     cursor:default;
     transition: background 0.3s ease;
-    background-image:url("/res/profile2.svg");
-    background-size:100%;
     background-repeat:no-repeat;
     background-position: center;
     margin-left:0.5rem;
-}
-#profile-btn:hover{
-    
+    cursor:pointer;
 }
 
 #container{
@@ -243,6 +239,7 @@
         align-items: center;
         transition: background 0.3s ease;
         user-select: none;
+        cursor:pointer;
     }
     #search-btn:hover{
         background-color:var(--ash);
@@ -400,15 +397,22 @@
 
 .inbox-item{
     display:grid;
-    grid-template-columns: 3rem 1fr 1fr 1fr;
+    grid-template-columns: 3rem 1fr 0.1fr 1fr;
     grid-template-areas: 
         "left top top rt"
         "left bottom bottom rb";
     align-items: center;
+    justify-self: center;
+    margin-left:1rem;
+    margin-right:1rem;
+    column-gap: 0.5rem;
 }
 
 .inbox-name{
     grid-area:top;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .last-msg{
@@ -417,6 +421,9 @@
 
 .inbox-last-time{
     grid-area:rt;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .inbox-unseen{

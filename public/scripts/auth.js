@@ -36,8 +36,8 @@ function channel(userA, userB=""){
 function loadInbox(data){
     inboxgenerate();
     $("#profile-title").textContent = data.fullname;
-    $("#profile-btn").style.background="url("+data.profilepic+")";
-    $("#profile-btn").style.backgroundSize = "100%";
+    $("#profile-btn").style.backgroundImage="url('"+data.profilepic+"')";
+    $("#profile-btn").style.backgroundSize = "90%";
     pusher = new Pusher("69cb07f696d28fd3387b", {
         cluster: "ap2",
         channelAuthorization: {
