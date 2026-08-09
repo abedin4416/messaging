@@ -39,8 +39,13 @@ function loadInbox(data){
     $("#profile-btn").style.backgroundImage="url('"+data.profilepic+"')";
     $("#profile-btn").style.backgroundSize = "90%";
 
-
-    inboxupdate(data);
+    const inboxdata = data.inboxdata;
+    const inboxlength = Object.keys(inboxdata).length;
+    if(inboxdata){
+        for(let i = inboxlength-1; i >= 0; i--){
+            inboxupdate(inboxdata[i]);
+        }
+    }
 
     pusher = new Pusher("69cb07f696d28fd3387b", {
         cluster: "ap2",
@@ -157,7 +162,7 @@ searchCont.addEventListener("keydown", async (e)=>{
 });
 
 container.addEventListener("click", async (e)=> {
-    stylechange("profile-menu");
+    $("#profile-menu") && stylechange("profile-menu");
     if(e.target.closest("#submit")){
         e.preventDefault();
         const path = window.location.pathname;

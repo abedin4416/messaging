@@ -45,6 +45,41 @@ function inputstate(e, ph, err = true){
     e.placeholder = `${ph}${err? " is required" : ""}`;
 }
 
+function chatTime(date) {
+  const target = new Date(date);
+  const now = new Date();
+  const diffMs = now - target;
+  const diffSeconds = Math.floor(diffMs / 1000);
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  const isToday =
+    target.getDate() === now.getDate() &&
+    target.getMonth() === now.getMonth() &&
+    target.getFullYear() === now.getFullYear();
+
+  if (isToday) {
+    return target.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true
+    });
+  }
+  if (diffDays >= 365) {
+    const years = Math.floor(diffDays / 365);
+    return `${years} ${years === 1 ? "year" : "years"}`;
+  }
+  if (diffDays <= 7) {
+    const days = Math.max(1, diffDays);
+    return `${days} ${days === 1 ? "day" : "days"}`;
+  }
+  return target.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric"
+  });
+}
+
 function stylechange(el, x){
     $("#"+el).className = "";
     x = x? "-"+x:"";
@@ -68,7 +103,7 @@ function inboxupdate(data){
     const icon = `<div class='inbox-icon'style='background-image:url("${data.senderprofile}")'></div>`;
     const fullname = `<div class='inbox-name'>${data.senderfullname}</div>`;
     const lmsg = `<div class='last-msg'>${data.content}</div>`;
-    const time = `<div class='inbox-last-time'>${data.created_at}</div>`;
+    const time = `<div class='inbox-last-time'>${chatTime(data.created_at)}</div>`;
     const unseen = `<div class='inbox-unseen'>${data.unseen}</div>`;
     const item = `<div id='${data.sender}' class='inbox-item'>${icon}${fullname}${lmsg}${time}${unseen}</div>`;
 

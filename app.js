@@ -45,24 +45,35 @@ async function session_verify(req, a=""){
 
 async function getInboxdata(session) {
   const query = `
-    SELECT * FROM (
+    SELECT 
+      threads.*,
+      COALESCE(unread.unread_count, 0) AS unseen
+    FROM (
       SELECT DISTINCT ON (partner) 
-        id, sender, receiver, content, created_at, partner
+        id, sender, receiver, senderfullname, senderprofile, receiverfullname, receiverprofile, content, created_at, partner
       FROM (
         SELECT 
-          id, sender, receiver, content, created_at,
+          id, sender, receiver, senderfullname, senderprofile, receiverfullname, receiverprofile, content, created_at,
           CASE WHEN sender = $1 THEN receiver ELSE sender END AS partner
         FROM messages
         WHERE sender = $1 OR receiver = $1
       ) sub
       ORDER BY partner, created_at DESC
     ) threads
-    ORDER BY created_at DESC;
+    LEFT JOIN (
+      SELECT 
+        sender AS partner, 
+        COUNT(*) AS unread_count
+      FROM messages
+      WHERE receiver = $1 AND seen = 0
+      GROUP BY sender
+    ) unread ON threads.partner = unread.partner
+    ORDER BY threads.created_at DESC;
   `;
-
   const { rows } = await db.query(query, [session.username]);
   return rows.length > 0 ? rows : null;
 }
+
 
 function chatTime(date) {
   const target = new Date(date);
@@ -272,8 +283,13 @@ app.post("/send", async (req, res)=> {
 
     const newMessage = await db.insert("messages", {
       sender: session.username,
+      senderfullname: session.fullname,
+      senderprofile:session.avatar,
       receiver: receiver,
-      content: content
+      receiverfullname: receiverInfo.fullname,
+      receiverprofile: receiverInfo.avatar,
+      content: content,
+      seen:0
     });
 
     const receiverUnseen = await db.count(
@@ -290,7 +306,7 @@ app.post("/send", async (req, res)=> {
       receiverprofile: receiverInfo.avatar,
       content: content,
       unseen: receiverUnseen,
-      created_at: chatTime(newMessage.created_at)
+      created_at: newMessage.created_at
     });
 
     return res.status(200).json({success:true, message: newMessage});
