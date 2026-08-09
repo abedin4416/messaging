@@ -38,6 +38,10 @@ function loadInbox(data){
     $("#profile-title").textContent = data.fullname;
     $("#profile-btn").style.backgroundImage="url('"+data.profilepic+"')";
     $("#profile-btn").style.backgroundSize = "90%";
+
+
+    inboxupdate(data);
+
     pusher = new Pusher("69cb07f696d28fd3387b", {
         cluster: "ap2",
         channelAuthorization: {
@@ -75,9 +79,6 @@ document.addEventListener("DOMContentLoaded", async ()=> {
 
 optionCont.addEventListener("click", async (e)=>{
     e.stopPropagation();
-    const search = $("#search-container");
-    const searchBox = $("#search-box");
-    const searchCls = $("#search-close");
     if(e.target.closest("#sign-btn")){
         const path = window.location.pathname;
         const newPath = path === "/"? "/signup":"/";
@@ -85,17 +86,19 @@ optionCont.addEventListener("click", async (e)=>{
         updateUI(newPath);
     }
     else if(e.target.closest("#search-btn")){
-        stylechange(search, 1);
-        stylechange(searchBox, 1);
-        stylechange($("#profile-menu"), 0);
-        searchBox.focus();
-        searchCls.classList.add("search-close");
+        stylechange("search-container", "float");
+        stylechange("search-box", "float");
+        stylechange("profile-menu");
+        stylechange("search-close", "float");
+        $("#search-box").focus();
     }
     else if(e.target.closest("#search-container")){
-        stylechange($("#profile-menu"), 0);
+        stylechange("profile-menu");
     }
     else if(e.target.closest("#profile-btn")){
-        stylechange($("#profile-menu"));
+        const x = $("#profile-menu").classList.contains("profile-menu-float");
+        x || stylechange("profile-menu", "float");
+        x && stylechange("profile-menu");
     }
     else if(e.target.closest("#signout-btn")){
         const response = await server("/signout", "POST", {});
@@ -109,38 +112,52 @@ optionCont.addEventListener("click", async (e)=>{
 });
 
 header.addEventListener("click", (e)=>{
-    stylechange($("#profile-menu"), false);
-    const search = $("#search-container");
-    const searchBox = $("#search-box");
-    const searchCls = $("#search-close");
+    stylechange("profile-menu");
     if(e.target.closest("#search-close")){
-        stylechange(search, 0);
-        stylechange(searchBox, 0);
-        searchCls.classList.remove("search-close");
+        stylechange("search-container");
+        stylechange("search-box");
+        stylechange("search-close");
+        stylechange("inbox-wrapper");
+        stylechange("search-res-container");
+        $("#search-box").value = "";
     }
     else if(e.target.closest("#search-container")){
-        stylechange($("#profile-menu"), 0);
+        stylechange("profile-menu");
     }
 });
 
 searchCont.addEventListener("keydown", async (e)=>{
     if(e.key === "Enter"){
         e.preventDefault();
+        stylechange("search-box", "float");
+        const x = $("#search-container").classList.contains("search-container");
+        x && stylechange("search-container", "x")
+        && stylechange("search-close", "x")
+        && stylechange("search-box", "float");
+        stylechange("inbox-wrapper", "x");
         const res = await server("/search", "POST", {
             username: $("#search-box").value.trim()
         });
         const data = await res.json();
-        stylechange($("#search-res-container"), 1);
-        $("#search-name").innerText = data.fullname;
-        $("#search-username").innerText = data.username;
-        $("#search-icon").style.background="url("+data.profilepic+")";
-        $("#search-icon").style.backgroundSize = "100%";
+        stylechange("search-res-container", "float");
+        if(data.status == 404){
+            stylechange("search-result", "x");
+            stylechange("search-empty", "float");
+            $("#search-empty").innerHTML = data.msg;
+        }
+        else{
+            stylechange("search-result");
+            stylechange("search-empty");
+            $("#search-name").innerText = data.fullname;
+            $("#search-username").innerText = data.username;
+            $("#search-icon").style.background="url("+data.profilepic+")";
+            $("#search-icon").style.backgroundSize = "100%";
+        }
     }
 });
 
 container.addEventListener("click", async (e)=> {
-    $("#profile-menu")?.classList.remove("profile-menu-float");
-    $("#profile-menu")?.classList.add("profile-menu");
+    stylechange("profile-menu");
     if(e.target.closest("#submit")){
         e.preventDefault();
         const path = window.location.pathname;

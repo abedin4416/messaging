@@ -43,6 +43,62 @@ async function session_verify(req, a=""){
   }
 }
 
+async function getInboxdata(session) {
+  const query = `
+    SELECT * FROM (
+      SELECT DISTINCT ON (partner) 
+        id, sender, receiver, content, created_at, partner
+      FROM (
+        SELECT 
+          id, sender, receiver, content, created_at,
+          CASE WHEN sender = $1 THEN receiver ELSE sender END AS partner
+        FROM messages
+        WHERE sender = $1 OR receiver = $1
+      ) sub
+      ORDER BY partner, created_at DESC
+    ) threads
+    ORDER BY created_at DESC;
+  `;
+
+  const { rows } = await db.query(query, [session.username]);
+  return rows.length > 0 ? rows : null;
+}
+
+function chatTime(date) {
+  const target = new Date(date);
+  const now = new Date();
+  const diffMs = now - target;
+  const diffSeconds = Math.floor(diffMs / 1000);
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  const isToday =
+    target.getDate() === now.getDate() &&
+    target.getMonth() === now.getMonth() &&
+    target.getFullYear() === now.getFullYear();
+
+  if (isToday) {
+    return target.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true
+    });
+  }
+  if (diffDays >= 365) {
+    const years = Math.floor(diffDays / 365);
+    return `${years} ${years === 1 ? "year" : "years"}`;
+  }
+  if (diffDays <= 7) {
+    const days = Math.max(1, diffDays);
+    return `${days} ${days === 1 ? "day" : "days"}`;
+  }
+  return target.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric"
+  });
+}
+
 app.post("/create", async (req, res) => {
   const { fullname, username, password } = req.body;
 
@@ -91,11 +147,13 @@ app.get("/session", async (req, res) => {
       return res.status(201).json({loggedIn: false});
     }
 
+    const inboxdata = await getInboxdata(session);
     return res.status(200).json({
       loggedIn: true,
       username: session.username,
       fullname: session.fullname,
-      profilepic: session.avatar
+      profilepic: session.avatar,
+      inboxdata: inboxdata
     });
   } catch (err) {
     console.error("Auth check error: ", err);
@@ -162,10 +220,11 @@ app.post("/search", async (req, res)=> {
     return res.status(400);
   }
   try{
-    const result = await db.getrow("users", `username='${username}'`, "id, fullname, avatar");
-    if(!result) return error(res, 404, "User not found.");
+    const result = await db.getrow("users", `username='${username}'`, "username, fullname, avatar");
+    if(!result) return res.json({status: 404, msg: "No user found."});
 
     return res.json({
+      status: 200,
       fullname: result.fullname,
       username: result.username,
       profilepic: result.avatar
@@ -231,7 +290,7 @@ app.post("/send", async (req, res)=> {
       receiverprofile: receiverInfo.avatar,
       content: content,
       unseen: receiverUnseen,
-      created_at: newMessage.created_at
+      created_at: chatTime(newMessage.created_at)
     });
 
     return res.status(200).json({success:true, message: newMessage});

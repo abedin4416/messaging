@@ -21,10 +21,10 @@ const deleteProf = "<div id='delete-profile' class='profile-menu-item'>Delete pr
 const signoutBtn = "<div id='signout-btn' class='profile-menu-item'>Sign out</div>";
 const profileMenu = "<div id='profile-menu' class='profile-menu'>"+profileTitle+profilePic+profileName+deleteProf+signoutBtn+"</div>";
 
-const searchRes = "<div id='search-res-container'class='search-res-container'><div id='search-result'><div id='search-icon'></div><div id='search-name'></div><div id='search-username'></div><div id='add-known'></div></div></div>";
+const searchRes = "<div id='search-res-container'class='search-res-container'><div id='search-empty' class='search-empty'></div><div id='search-result' class='search-result'><div id='search-icon'></div><div id='search-name'></div><div id='search-username'></div><div id='add-known'></div></div></div>";
 const inboxCont = "<div id='inbox-container' class='inbox-container'></div>";
 const chatCont = "<div id='chat-container' class='chat-container inbox-opened'></div>";
-const inboxWrapper = "<div id='inbox-wrapper'>"+inboxCont+chatCont+"</div>";
+const inboxWrapper = "<div id='inbox-wrapper' class='inbox-wrapper'>"+inboxCont+chatCont+"</div>";
 
 function $(a){return document.querySelector(a);}
 function createEl(a){return document.createElement(a);}
@@ -45,10 +45,10 @@ function inputstate(e, ph, err = true){
     e.placeholder = `${ph}${err? " is required" : ""}`;
 }
 
-function stylechange(e, x){
-    x = x==undefined? e.classList.contains(e.id):x;
-    e.classList.toggle(e.id, !x);
-    e.classList.toggle(e.id+"-float", x);
+function stylechange(el, x){
+    $("#"+el).className = "";
+    x = x? "-"+x:"";
+    $("#"+el).classList.add(el+x);
 }
 
 function inboxgenerate(){
@@ -56,6 +56,12 @@ function inboxgenerate(){
     searchCont.classList.remove("hidden");
     searchCont.innerHTML = searchInput;
     container.innerHTML = searchRes+inboxWrapper;
+}
+
+function classname(id, cls, action){
+    action = action || "contains";
+    cls = cls || id;
+    return $('#'+id).classList[action](cls);
 }
 
 function inboxupdate(data){
@@ -102,4 +108,8 @@ function signin_form(){
     $("#sign-msg").textContent = "Sign in to your account.";
     $("#submit").textContent = "Sign in";
     inputfocus();
+}
+
+function searchResult(){
+
 }
