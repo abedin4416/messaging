@@ -100,20 +100,26 @@ function classname(id, cls, action){
 }
 
 function inboxupdate(data){
-    const icon = `<div class='inbox-icon'style='background-image:url("${data.senderprofile}")'></div>`;
-    const fullname = `<div class='inbox-name'>${data.senderfullname}</div>`;
+    let partnerprofile = data.senderprofile;
+    let partnerfullname = data.senderfullname;
+    if(data.partner){
+        partnerfullname = data.receiverfullname;
+        partnerprofile = data.receiverprofile;
+    }
+    const icon = `<div class='inbox-icon'style='background-image:url("${partnerprofile}")'></div>`;
+    const fullname = `<div class='inbox-name'>${partnerfullname}</div>`;
     const lmsg = `<div class='last-msg'>${data.content}</div>`;
     const time = `<div class='inbox-last-time'>${chatTime(data.created_at)}</div>`;
     const unseen = `<div class='inbox-unseen'>${data.unseen}</div>`;
     const item = `<div id='${data.sender}' class='inbox-item'>${icon}${fullname}${lmsg}${time}${unseen}</div>`;
 
-    if(inboxdata.includes(data.sender)){
-        $(`#${data.sender}`).outerHTML = "";
+    if(inboxdata.includes(data.partner)){
+        $(`#${data.partner}`).outerHTML = "";
         const inboxHtml = $("#inbox-container").innerHTML;
         $("#inbox-container").innerHTML = item+inboxHtml;
     }
     else {
-        inboxdata.push(data.sender);
+        inboxdata.push(data.partner);
         const inboxHtml = $("#inbox-container").innerHTML;
         $("#inbox-container").innerHTML = item+inboxHtml;
     }
