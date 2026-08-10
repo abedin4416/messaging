@@ -22,7 +22,9 @@ const signoutBtn = "<div id='signout-btn' class='profile-menu-item'>Sign out</di
 const profileMenu = "<div id='profile-menu' class='profile-menu'>"+profileTitle+profilePic+profileName+deleteProf+signoutBtn+"</div>";
 
 const searchRes = "<div id='search-res-container'class='search-res-container'><div id='search-empty' class='search-empty'></div><div id='search-result' class='search-result'><div id='search-icon'></div><div id='search-name'></div><div id='search-username'></div><div id='add-known'></div></div></div>";
-const inboxCont = "<div id='inbox-container' class='inbox-container'></div>";
+const inboxoption = "<div id='inbox-option'><div id='chats-btn'>Chats</div><div id='known-list-btn'>Known people</div></div>"
+const inboxcontent = "<div id='inbox-content'></div>"
+const inboxCont = "<div id='inbox-container' class='inbox-container'>"+inboxoption+inboxcontent+"</div>";
 const chatCont = "<div id='chat-container' class='chat-container inbox-opened'></div>";
 const inboxWrapper = "<div id='inbox-wrapper' class='inbox-wrapper'>"+inboxCont+chatCont+"</div>";
 
@@ -116,13 +118,13 @@ function inboxupdate(data){
 
     if(inboxdata.includes(data.partner)){
         $(`#${data.partner}`).outerHTML = "";
-        const inboxHtml = $("#inbox-container").innerHTML;
-        $("#inbox-container").innerHTML = item+inboxHtml;
+        const inboxHtml = $("#inbox-content").innerHTML;
+        $("#inbox-content").innerHTML = item+inboxHtml;
     }
     else {
         inboxdata.push(data.partner);
-        const inboxHtml = $("#inbox-container").innerHTML;
-        $("#inbox-container").innerHTML = item+inboxHtml;
+        const inboxHtml = $("#inbox-content").innerHTML;
+        $("#inbox-content").innerHTML = item+inboxHtml;
     }
 }
 

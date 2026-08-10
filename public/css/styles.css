@@ -155,7 +155,6 @@
     background-repeat:no-repeat;
     background-position: center;
     margin-left:0.5rem;
-    cursor:pointer;
 }
 
 #container{
@@ -247,7 +246,6 @@
         align-items: center;
         transition: background 0.3s ease;
         user-select: none;
-        cursor:pointer;
     }
     #search-btn:hover{
         background-color:var(--ash);
@@ -433,6 +431,7 @@
     border-radius: 1rem;
     cursor: default;
     user-select: none;
+    margin-bottom:0.5rem;
 }
 
 .inbox-item:hover{
@@ -469,8 +468,27 @@
     grid-area:rb;
     text-align: right;
     border-radius:1rem;
-    background-color:#dfdfdf;
+    background-color: rgb(0,210,240);
     justify-self: end;
     padding-left:0.5rem;
     padding-right:0.5rem;
+}
+
+#inbox-option{
+    display:grid;
+    justify-content: center;
+    grid-auto-flow: column;
+    column-gap:1rem;
+    user-select: none;
+}
+
+#chats-btn{
+    background:var(--ash);
+    border-radius:1rem;
+    padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+}
+#known-list-btn{
+    background:var(--ash);
+    border-radius:1rem;
+    padding: 0.1rem 0.5rem 0.1rem 0.5rem;
 }
