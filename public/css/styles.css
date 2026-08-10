@@ -485,10 +485,10 @@
 #chats-btn{
     background:var(--ash);
     border-radius:1rem;
-    padding: 0.2rem 0.5rem 0.2rem 0.5rem;
+    padding: 0.25rem 0.5rem 0.25rem 0.5rem;
 }
 #known-list-btn{
     background:var(--ash);
     border-radius:1rem;
-    padding: 0.2rem 0.5rem 0.2rem 0.5rem;
+    padding: 0.25rem 0.5rem 0.25rem 0.5rem;
 }
