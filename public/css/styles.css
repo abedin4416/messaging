@@ -392,7 +392,8 @@
 }
 
 #chat-container{
-    background-color: teal;
+    background-color: var(--ash-2);
+    border-radius:1rem;
     height:100%;
 }
 
@@ -468,7 +469,7 @@
     grid-area:rb;
     text-align: right;
     border-radius:1rem;
-    background-color: rgb(0,210,240);
+    background-color: var(--l-blue);
     justify-self: end;
     padding-left:0.5rem;
     padding-right:0.5rem;
@@ -480,15 +481,39 @@
     grid-auto-flow: column;
     column-gap:1rem;
     user-select: none;
+    margin-bottom:0.7rem;
 }
 
 #chats-btn{
-    background:var(--ash);
     border-radius:1rem;
     padding: 0.25rem 0.5rem 0.25rem 0.5rem;
 }
-#known-list-btn{
+.chats-btn{
     background:var(--ash);
+}
+.chats-btn-on{
+    background:var(--l-blue);
+}
+.chats-btn:hover{
+    background: var(--d-ash);
+}
+#known-list-btn{
     border-radius:1rem;
     padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+}
+.known-list-btn:hover{
+    background:var(--d-ash);
+}
+.known-list-btn{
+    background:var(--ash);
+}
+.known-list-btn-on{
+    background:var(--l-blue);
+}
+
+.inbox-content-x{
+    display:none;
+}
+.inbox-known-x{
+    display:none;
 }

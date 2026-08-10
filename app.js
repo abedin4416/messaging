@@ -289,7 +289,7 @@ app.post("/send", async (req, res)=> {
       receiverfullname: receiverInfo.fullname,
       receiverprofile: receiverInfo.avatar,
       content: content,
-      seen:0
+      seen: session.username == receiver? 1:0
     });
 
     const receiverUnseen = await db.count(

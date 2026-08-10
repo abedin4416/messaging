@@ -190,6 +190,19 @@ container.addEventListener("click", async (e)=> {
             }
         }
     }
+    else if(e.target.closest("#known-list-btn")){
+        stylechange("known-list-btn", "on");
+        stylechange("chats-btn");
+        stylechange("inbox-content", "x");
+        stylechange("inbox-known");
+
+    }
+    else if(e.target.closest("#chats-btn")){
+        stylechange("known-list-btn");
+        stylechange("chats-btn", "on");
+        stylechange("inbox-content");
+        stylechange("inbox-known", "x");
+    }
 });
 
 window.addEventListener("popstate", async ()=> {
