@@ -306,6 +306,7 @@ app.post("/send", async (req, res)=> {
       receiverprofile: receiverInfo.avatar,
       content: content,
       unseen: receiverUnseen,
+      partner: session.username,
       created_at: newMessage.created_at
     });
 

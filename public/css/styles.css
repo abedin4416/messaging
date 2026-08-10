@@ -517,3 +517,13 @@
 .inbox-known-x{
     display:none;
 }
+
+.nochat{
+    display:grid;
+    width:100%;
+    justify-content:center;
+    text-align:center;
+    font-size:14pt;
+    color:grey;
+    margin-top:12rem;
+}

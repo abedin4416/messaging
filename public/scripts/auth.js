@@ -40,7 +40,7 @@ function loadInbox(data){
     $("#profile-btn").style.backgroundSize = "90%";
 
     const inboxdata = data.inboxdata;
-    const inboxlength = Object.keys(inboxdata).length;
+    const inboxlength = inboxdata && Object.keys(inboxdata).length;
     if(inboxdata){
         for(let i = inboxlength-1; i >= 0; i--){
             inboxupdate(inboxdata[i]);

@@ -26,7 +26,8 @@ const inboxoption = "<div id='inbox-option'><div id='chats-btn' class='chats-btn
 const inboxcontent = "<div id='inbox-content' class='inbox-content'></div>"
 const inboxknown = "<div id='inbox-known' class='inbox-known-x'>HEY YOU!</div>";
 const inboxCont = "<div id='inbox-container' class='inbox-container'>"+inboxoption+inboxcontent+inboxknown+"</div>";
-const chatCont = "<div id='chat-container' class='chat-container inbox-opened'></div>";
+const nochat = "<div id='nochat' class='nochat'>Select a person<br>to start a conversation.</div>"
+const chatCont = "<div id='chat-container' class='chat-container inbox-opened'>"+nochat+"</div>";
 const inboxWrapper = "<div id='inbox-wrapper' class='inbox-wrapper'>"+inboxCont+chatCont+"</div>";
 
 function $(a){return document.querySelector(a);}
@@ -109,12 +110,13 @@ function inboxupdate(data){
         partnerfullname = data.senderfullname;
         partnerprofile = data.senderprofile;
     }
-    const sender = data.sender != data.partner? "<text style='color:black'>You: </text>":"";
+
+    const sender = data.sender == data.partner? ("<text style='color:black'>You: </text>"):"";
     const icon = `<div class='inbox-icon'style='background-image:url("${partnerprofile}")'></div>`;
     const fullname = `<div class='inbox-name'>${partnerfullname}</div>`;
     const lmsg = `<div class='last-msg'>${sender}${data.content}</div>`;
     const time = `<div class='inbox-last-time'>${chatTime(data.created_at)}</div>`;
-    const unseen = `<div class='inbox-unseen'>${data.unseen}</div>`;
+    const unseen = `<div class='inbox-unseen'>${data.unseen=="0"? "":data.unseen}</div>`;
     const item = `<div id='${data.partner}' class='inbox-item'>${icon}${fullname}${lmsg}${time}${unseen}</div>`;
 
     if(inboxdata.includes(data.partner)){
