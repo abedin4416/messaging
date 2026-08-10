@@ -159,7 +159,7 @@
 
 #container{
     grid-row: 2;
-    margin-top:0.5rem;
+    margin-top:0.7rem;
 }
 
 #user-form-msg{
@@ -485,10 +485,10 @@
 #chats-btn{
     background:var(--ash);
     border-radius:1rem;
-    padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+    padding: 0.2rem 0.5rem 0.2rem 0.5rem;
 }
 #known-list-btn{
     background:var(--ash);
     border-radius:1rem;
-    padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+    padding: 0.2rem 0.5rem 0.2rem 0.5rem;
 }
