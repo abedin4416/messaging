@@ -111,7 +111,7 @@ function inboxupdate(data, username){
         partnerprofile = data.senderprofile;
     }
 
-    const sender = username == data.partner? ("<text style='color:black'>You: </text>"):"";
+    const sender = username == data.sender? ("<text style='color:black'>You: </text>"):"";
     const icon = `<div class='inbox-icon'style='background-image:url("${partnerprofile}")'></div>`;
     const fullname = `<div class='inbox-name'>${partnerfullname}</div>`;
     const lmsg = `<div class='last-msg'>${sender}${data.content}</div>`;
