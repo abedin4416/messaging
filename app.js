@@ -316,6 +316,25 @@ app.post("/send", async (req, res)=> {
   }
 });
 
+app.post("/chatdata", async (req, res)=> {
+  const {username, partner} = req.body;
+  if(!username || !partner){
+    return res.json({status:400, msg:"Failed to load chats."});
+  }
+  try{
+    const query = `
+      SELECT * FROM messages
+      WHERE (sender = $1 AND receiver = $2)
+        OR (sender = $2 AND receiver = $1)
+      ORDER BY created_at ASC;`;
+    
+    const data = await db.query(query, [username, partner]);
+    return res.json(data.rows);
+  } catch(err){
+    return res.status(500).json({ status: 500, msg: "Internal server error." });
+  }
+});
+
 app.get("*", (req, res) => {
     res.sendFile(path.join(import.meta.dirname, 'public', 'index.html'));
 });

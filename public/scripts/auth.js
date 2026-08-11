@@ -26,6 +26,8 @@ async function sendMsg(receiver, message){
     });
 }
 
+let username;
+
 function channel(userA, userB=""){
     const type = userB? "chat-":"inbox";
     const channelName = `private-${type}${[userA, userB].sort().join("-")}`;
@@ -64,7 +66,10 @@ async function updateUI(path){
     if(path=="/"){
         const res = await server("/session");
         const data = await res.json();
-        if(res.status == 200) loadInbox(data);
+        if(res.status == 200){
+            username = data.username;
+            loadInbox(data);
+        }
         else {
             pusher && pusher.disconnect();
             pusher = null;
@@ -202,6 +207,34 @@ container.addEventListener("click", async (e)=> {
         stylechange("chats-btn", "on");
         stylechange("inbox-content");
         stylechange("inbox-known", "x");
+    }
+    else if(e.target.closest(".inbox-item")){
+        const id = e.target.closest(".inbox-item").id;
+        const chcont = $("#chat-container");
+        const x = chcont.getAttribute("person") == id;
+        if(x){
+            stylechange("inbox-container");
+            stylechange("chat-container", "x");
+            chcont.setAttribute("person", "");
+            chcont.innerHTML = nochat;
+        }
+        else {
+            stylechange("inbox-container", "x");
+            stylechange("chat-container");
+            chcont.setAttribute("person", id);
+            chcont.innerHTML = "";
+
+            const data = await server("/chatdata", "POST", {
+                username: username,
+                partner: id
+            });
+            const res = await data.json();
+            const length = Object.keys(res).length;
+
+            for(let i = 0; i < length; i++){
+                loadChat(res[i]);
+            }
+        }
     }
 });
 

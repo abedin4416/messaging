@@ -397,12 +397,22 @@
     height:100%;
 }
 
+.chat-container{
+    display:grid;
+    grid-auto-flow:row;
+    justify-items:start;
+    align-content:end;
+}
+
 @media (max-width:48rem){
     #inbox-wrapper{
         grid-template-columns: 1fr;
         justify-content: center;
     }
-    .inbox-opened{
+    .inbox-container-x{
+        display:none;
+    }
+    .chat-container-x{
         display:none;
     }
 }
@@ -526,4 +536,34 @@
     font-size:14pt;
     color:grey;
     margin-top:12rem;
+}
+
+#bubble{
+    padding:0.5rem;
+    background:white;
+    border-radius:1rem;
+    margin-top:1rem;
+    display:grid;
+}
+.user-bubble{
+    justify-self: end;
+}
+
+
+#bubble-end{
+    display:grid;
+    grid-auto-flow: column;
+    justify-content: end;
+    margin-top:0.5rem;
+    column-gap:0.5rem;
+}
+
+#bubble-date{
+    font-size:9pt;
+    color:grey;
+}
+
+#chat-receipt{
+    font-size:9pt;
+    color:grey;
 }

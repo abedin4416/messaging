@@ -27,7 +27,7 @@ const inboxcontent = "<div id='inbox-content' class='inbox-content'></div>"
 const inboxknown = "<div id='inbox-known' class='inbox-known-x'>HEY YOU!</div>";
 const inboxCont = "<div id='inbox-container' class='inbox-container'>"+inboxoption+inboxcontent+inboxknown+"</div>";
 const nochat = "<div id='nochat' class='nochat'>Select a person<br>to start a conversation.</div>"
-const chatCont = "<div id='chat-container' class='chat-container inbox-opened'>"+nochat+"</div>";
+const chatCont = "<div id='chat-container' class='chat-container-x' person=''>"+nochat+"</div>";
 const inboxWrapper = "<div id='inbox-wrapper' class='inbox-wrapper'>"+inboxCont+chatCont+"</div>";
 
 function $(a){return document.querySelector(a);}
@@ -41,7 +41,7 @@ const container = $("#container");
 const optionCont = $("#option-container");
 const searchCont = $("#search-container");
 
-let inboxdata = [];
+let inboxdata = {};
 
 function inputstate(e, ph, err = true){
     e.classList.toggle("emptyinput", err);
@@ -111,7 +111,8 @@ function inboxupdate(data, username){
         partnerprofile = data.senderprofile;
     }
 
-    const sender = username == data.sender? ("<text style='color:black'>You: </text>"):"";
+    const sameuser = username == data.sender;
+    const sender = sameuser? ("<text style='color:black'>You: </text>"):"";
     const icon = `<div class='inbox-icon'style='background-image:url("${partnerprofile}")'></div>`;
     const fullname = `<div class='inbox-name'>${partnerfullname}</div>`;
     const lmsg = `<div class='last-msg'>${sender}${data.content}</div>`;
@@ -119,13 +120,16 @@ function inboxupdate(data, username){
     const unseen = `<div class='inbox-unseen'>${data.unseen=="0"? "":data.unseen}</div>`;
     const item = `<div id='${data.partner}' class='inbox-item'>${icon}${fullname}${lmsg}${time}${unseen}</div>`;
 
-    if(inboxdata.includes(data.partner)){
+    if(data.partner in inboxdata){
         $(`#${data.partner}`).outerHTML = "";
         const inboxHtml = $("#inbox-content").innerHTML;
         $("#inbox-content").innerHTML = item+inboxHtml;
     }
     else {
-        inboxdata.push(data.partner);
+        inboxdata[data.partner] = {
+            profile: partnerprofile,
+            fullname: partnerfullname
+        };
         const inboxHtml = $("#inbox-content").innerHTML;
         $("#inbox-content").innerHTML = item+inboxHtml;
     }
@@ -159,4 +163,13 @@ function signin_form(){
 
 function searchResult(){
 
+}
+
+function loadChat(data){
+    const sameuser = username == data.sender;
+    const date = `<div id='bubble-date'>${chatTime(data.created_at)}</div>`;
+    const receipt = `<div id='chat-receipt'>${data.seen==0? "Sent":"Seen"}</div>`;
+    const bubbleEnd = `<div id='bubble-end'>${date}${receipt}</div>`;
+    const bubble = `<div id='bubble' class='${sameuser? "user-bubble":"partner-bubble"}'>${data.content}${bubbleEnd}</div>`;
+    $("#chat-container").innerHTML += bubble;
 }
