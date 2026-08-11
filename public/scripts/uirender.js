@@ -103,7 +103,7 @@ function classname(id, cls, action){
     return $('#'+id).classList[action](cls);
 }
 
-function inboxupdate(data){
+function inboxupdate(data, username){
     let partnerprofile = data.receiverprofile;
     let partnerfullname = data.receiverfullname;
     if(data.partner == data.sender){
@@ -111,7 +111,7 @@ function inboxupdate(data){
         partnerprofile = data.senderprofile;
     }
 
-    const sender = data.sender == data.partner? ("<text style='color:black'>You: </text>"):"";
+    const sender = username == data.partner? ("<text style='color:black'>You: </text>"):"";
     const icon = `<div class='inbox-icon'style='background-image:url("${partnerprofile}")'></div>`;
     const fullname = `<div class='inbox-name'>${partnerfullname}</div>`;
     const lmsg = `<div class='last-msg'>${sender}${data.content}</div>`;

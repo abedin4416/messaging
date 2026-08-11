@@ -43,7 +43,7 @@ function loadInbox(data){
     const inboxlength = inboxdata && Object.keys(inboxdata).length;
     if(inboxdata){
         for(let i = inboxlength-1; i >= 0; i--){
-            inboxupdate(inboxdata[i]);
+            inboxupdate(inboxdata[i], data.username);
         }
     }
 
